@@ -1,14 +1,14 @@
-# 🎓 StellaroidEarn
+# 🫂 TulongChain
 
-**On-chain credential verification and learn-to-earn rewards for Filipino students — powered by Stellar + Soroban.**
+**Community disaster relief fund for Filipino families — transparent, instant, on-chain.**
 
 Built on **Stellar + Soroban** · Stellar Philippines UniTour Bootcamp 2026
 
 [![Stellar](https://img.shields.io/badge/Built%20on-Stellar-7F77DD?style=flat-square&logo=stellar&logoColor=white)](https://stellar.org)
 [![Soroban](https://img.shields.io/badge/Smart%20Contract-Soroban-534AB7?style=flat-square)](https://soroban.stellar.org)
 [![Rust](https://img.shields.io/badge/Language-Rust-D85A30?style=flat-square&logo=rust&logoColor=white)](https://www.rust-lang.org)
-[![XLM](https://img.shields.io/badge/Token-XLM%20%2F%20USDC-2775CA?style=flat-square)](https://stellar.org)
-[![Tests](https://img.shields.io/badge/Tests-3%20passing-639922?style=flat-square)](#tests)
+[![USDC](https://img.shields.io/badge/Token-USDC-2775CA?style=flat-square)](https://www.circle.com/usdc)
+[![Tests](https://img.shields.io/badge/Tests-5%20passing-639922?style=flat-square)](#tests)
 [![License: MIT](https://img.shields.io/badge/License-MIT-888780?style=flat-square)](LICENSE)
 
 ---
@@ -18,80 +18,66 @@ Built on **Stellar + Soroban** · Stellar Philippines UniTour Bootcamp 2026
 **Deployed on Stellar Testnet**
 
 ```
-<YOUR_CONTRACT_ID>
+CCHK4RPWA66DAMY4BAZOTGRCF7Y3RHAODOXZVKFMZ7FNO2ZFEZUMR4CO
 ```
 
-🔍 **[View on Stellar Expert →](https://stellar.expert/explorer/testnet/contract/<YOUR_CONTRACT_ID>)**
+🔍 **[View on Stellar Expert →](https://stellar.expert/explorer/testnet/contract/CCHK4RPWA66DAMY4BAZOTGRCF7Y3RHAODOXZVKFMZ7FNO2ZFEZUMR4CO)**
 
 ---
 
 ## The Problem
 
-A graduating student at the University of the Philippines or a bootcamp completer at Zuitt cannot easily prove their credentials to employers. Manual verification takes days or weeks — HR teams email institutions, institutions respond slowly, and fraudulent certificates circulate freely in GDrive links and printed PDFs.
+Natural disasters hit the Philippines every typhoon season. Relief fundraising is scattered across GCash, bank transfers, and social media group chats.
 
 | Pain Point | Reality |
 |---|---|
-| Credential verification | 3–10 days via email / manual processes |
-| Certificate fraud | Fabricated PDFs undetectable without contacting the issuer |
-| Payment routing | Students share wrong GCash numbers or bank accounts |
-| Financial access | Fresh graduates cannot access DeFi, loans, or on-chain payroll |
+| Settlement time | 3–5 business days |
+| Transfer fees | 5–10% per donation lost |
+| Transparency | Screenshot-based trust |
+| Speed during emergencies | Coordinators wait for bank clearance windows |
 
-Students lose job opportunities and income while employers waste time on verification backlogs they cannot trust.
+Typhoon victims wait **days** for food and medicine while coordinators lose a cut of every peso to fees and manual tracking errors.
 
 ---
 
 ## The Solution
 
-StellaroidEarn registers every certificate as an immutable on-chain record anchored to the student's Stellar wallet. Institutions issue once; anyone — employers, DAOs, lending protocols — verifies instantly. Students earn XLM rewards upon certificate issuance. Employers pay directly to the on-chain verified wallet address, eliminating misdirected payments.
+TulongChain lets anyone donate USDC directly into a **Soroban smart contract escrow**. Funds stay locked on-chain until a verified coordinator declares a disaster emergency. Every donation and withdrawal is publicly traceable on Stellar Expert — no middlemen, no mystery.
 
-| Metric | StellaroidEarn |
+| Metric | TulongChain |
 |---|---|
-|  Verification speed | Under 5 seconds |
+|  Settlement | Under 5 seconds |
 |  Transaction fee | Under $0.01 |
-|  Tamper detection | Hash mismatch = fraud flagged on-chain |
-|  Payment safety | Employer pays to contract-verified wallet only |
-|  Learn-to-earn | XLM reward on every verified certificate |
+|  Auditability | Every peso on-chain |
+|  Fund security | Locked until emergency declared |
 
 ---
 
 ## How It Works
 
 ```
-University / Bootcamp (Admin)
-         │
-         ▼ register_certificate(owner, hash, title, issuer)
- ┌────────────────────────────────────────┐
- │       StellaroidEarn Soroban           │
- │       Contract Registry               │
- │                                        │
- │  CertRecord {                          │
- │    hash:      SHA-256 of document      │
- │    owner:     Student Stellar wallet   │
- │    title:     "BSc Computer Science"   │
- │    issuer:    "UP Diliman"             │
- │    issued_at: Ledger timestamp         │
- │    rewarded:  false → true             │
- │  }                                     │
- └─────────┬──────────────────────────────┘
-           │
-           ├──► reward_student(hash)
-           │         └── XLM → student wallet
-           │
-           ├──► verify_certificate(hash, claimed_owner)
-           │         └── returns bool + emits cert_verified event
-           │
-           └──► link_payment(employer, hash, token, amount)
-                      └── employer funds → student verified wallet
+Donor (Freighter)
+      │
+      ▼ donate(donor, token, amount)
+┌─────────────────────────────┐
+│   TulongChain Soroban       │
+│   Contract Escrow           │  ← Funds locked here
+│                             │
+│  [Emergency = false]        │  ← Withdrawals BLOCKED
+│  [Emergency = true]  ───────┼──► withdraw(coordinator, amount, purpose)
+└─────────────────────────────┘
+      │
+      ▼ Soroban Events
+Stellar Expert · Convex Real-Time DB
 ```
 
 **Transaction flow (demo-able in under 2 minutes):**
 
-1. Institution connects Freighter (admin wallet) → calls `register_certificate()`
-2. Certificate hash + student wallet stored permanently on-chain; `cert_registered` event emitted
-3. Admin calls `reward_student()` → XLM transferred from contract to student wallet; `student_rewarded` event emitted
-4. Employer calls `verify_certificate(hash, student_address)` → returns `true` in <5 seconds
-5. Employer calls `link_payment()` → funds go directly to the verified wallet address; `payment_linked` event emitted
-6. Dashboard shows all events in real time via Stellar Expert
+1. Donor connects Freighter wallet → enters USDC amount → clicks **Donate**
+2. `donate()` transfers USDC into the contract escrow; `donated` event emitted
+3. Admin clicks **Declare Emergency** → `declare_emergency()` sets the flag to `true`
+4. `withdraw()` transfers USDC to coordinator with a purpose string stored on-chain
+5. Dashboard shows live `TotalDonated`, `Balance`, and `TotalWithdrawn`
 
 ---
 
@@ -99,26 +85,10 @@ University / Bootcamp (Admin)
 
 | Feature | How It's Used |
 |---|---|
-| **Soroban Smart Contracts** | Core registry — `register_certificate()`, `reward_student()`, `verify_certificate()`, `link_payment()` all enforced on-chain |
-| **XLM Transfers** | Learn-to-earn: XLM reward paid to student wallet on certificate issuance |
-| **Custom Tokens** | Optional: schools can issue a credential asset (e.g. `UPDCERT`) as a Stellar custom token |
-| **Trustlines** | Students must hold a trustline to receive school-issued credential tokens |
-| **Soroban Events** | `cert_registered`, `student_rewarded`, `cert_verified`, `payment_linked` — emitted on every state change |
-
----
-
-## Contract Functions
-
-| Function | Caller | Description |
-|---|---|---|
-| `initialize()` | Admin (deploy) | Set admin wallet, reward token, reward amount |
-| `register_certificate()` | Admin only | Hash + wallet on-chain; duplicate + tamper guard |
-| `reward_student()` | Admin only | Transfer XLM reward to student; idempotency guard |
-| `verify_certificate()` | Anyone | Returns bool; emits `cert_verified` event |
-| `link_payment()` | Employer | Transfer funds to verified student wallet |
-| `get_certificate()` | Anyone | Read full `CertRecord` by hash |
-| `get_total_certificates()` | Anyone | Count of all registered certs |
-| `get_reward_amount()` | Anyone | Current XLM reward per certificate |
+| **Soroban Smart Contracts** | Core escrow logic — `donate()`, `declare_emergency()`, `withdraw()`, `lift_emergency()` all enforced on-chain |
+| **USDC on Stellar** | Stablecoin donations eliminate XLM price volatility — predictable, stable amounts |
+| **Trustlines** | Recipients must opt-in to USDC before receiving funds (SEP-41 compliance) |
+| **Soroban Events** | `donated`, `emergency_declared`, `emergency_lifted`, `withdrawn` emitted on every state change |
 
 ---
 
@@ -128,7 +98,7 @@ University / Bootcamp (Admin)
 - WASM target: `rustup target add wasm32-unknown-unknown`
 - [Stellar CLI](https://developers.stellar.org/docs/tools/stellar-cli): `cargo install --locked stellar-cli --features opt`
 - [Node.js](https://nodejs.org) v18+
-- [Freighter Wallet](https://www.freighter.app) browser extension (set to Testnet)
+- [Freighter Wallet](https://www.freighter.app) (set to Testnet)
 
 ---
 
@@ -137,20 +107,22 @@ University / Bootcamp (Admin)
 ### 1. Clone & Test
 
 ```bash
-git clone https://github.com/<your-username>/stellaroid-earn.git
-cd stellaroid-earn/contracts
+git clone https://github.com/<your-username>/tulongchain.git
+cd tulongchain/contracts
 cargo test
 ```
 
 Expected output:
 
 ```
-running 3 tests
-test test::test_register_and_reward_student   ... ok
-test test::test_duplicate_certificate_rejected ... ok
-test test::test_certificate_storage_state     ... ok
+running 5 tests
+test test::test_initialize                ... ok
+test test::test_single_donation           ... ok
+test test::test_multiple_donors           ... ok
+test test::test_emergency_lifecycle       ... ok
+test test::test_withdraw_during_emergency ... ok
 
-test result: ok. 3 passed; 0 failed
+test result: ok. 5 passed; 0 failed
 ```
 
 ### 2. Build
@@ -159,8 +131,6 @@ test result: ok. 3 passed; 0 failed
 cargo build --target wasm32-unknown-unknown --release
 ```
 
-Output WASM: `target/wasm32-unknown-unknown/release/stellaroid_earn.wasm`
-
 ### 3. Deploy to Testnet
 
 ```bash
@@ -168,14 +138,12 @@ Output WASM: `target/wasm32-unknown-unknown/release/stellaroid_earn.wasm`
 stellar keys generate --global my-key --network testnet
 stellar keys fund my-key --network testnet
 
-# Deploy contract
+# Deploy
 stellar contract deploy \
-  --wasm target/wasm32-unknown-unknown/release/stellaroid_earn.wasm \
+  --wasm target/wasm32-unknown-unknown/release/tulong_chain.wasm \
   --source my-key \
   --network testnet
 ```
-
-Copy the Contract ID (starts with `C...`) from the output.
 
 ### 4. Initialize
 
@@ -185,103 +153,84 @@ stellar contract invoke \
   --source my-key \
   --network testnet \
   -- initialize \
-  --admin <ADMIN_WALLET_ADDRESS> \
-  --token CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC \
-  --reward_amount 100000000
+  --admin <YOUR_WALLET_ADDRESS>
 ```
-
-> `CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC` is the XLM (native) token contract on Testnet. `100000000` = 10 XLM (7-decimal precision).
 
 ---
 
 ## Contract Invocations
 
-**Register a certificate**
+**Donate USDC**
 ```bash
 stellar contract invoke \
-  --id <CONTRACT_ID> \
+  --id CCHK4RPWA66DAMY4BAZOTGRCF7Y3RHAODOXZVKFMZ7FNO2ZFEZUMR4CO \
   --source my-key \
   --network testnet \
-  -- register_certificate \
-  --owner GABC123...XYZ \
-  --hash aabbccddeeff00112233445566778899aabbccddeeff00112233445566778899 \
-  --title "Bachelor of Science in Computer Science" \
-  --issuer "University of the Philippines Diliman"
-```
-
-**Reward a student**
-```bash
-stellar contract invoke \
-  --id <CONTRACT_ID> \
-  --source my-key \
-  --network testnet \
-  -- reward_student \
-  --hash aabbccddeeff00112233445566778899aabbccddeeff00112233445566778899
-```
-
-**Verify a certificate**
-```bash
-stellar contract invoke \
-  --id <CONTRACT_ID> \
-  --source my-key \
-  --network testnet \
-  -- verify_certificate \
-  --hash aabbccddeeff00112233445566778899aabbccddeeff00112233445566778899 \
-  --claimed_owner GABC123...XYZ
-```
-
-**Employer payment**
-```bash
-stellar contract invoke \
-  --id <CONTRACT_ID> \
-  --source employer-key \
-  --network testnet \
-  -- link_payment \
-  --employer GEMPLOYER123...XYZ \
-  --hash aabbccddeeff00112233445566778899aabbccddeeff00112233445566778899 \
-  --token CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC \
+  -- donate \
+  --donor <YOUR_ADDRESS> \
+  --token CBIELTK6YBZJU5UP2WWQEUCYKLPU6AUNZ2BQ4WWFEIE3USCIHMXQDAMA \
   --amount 500000000
 ```
 
-**Check a stored certificate**
+**Declare emergency**
 ```bash
 stellar contract invoke \
-  --id <CONTRACT_ID> \
+  --id CCHK4RPWA66DAMY4BAZOTGRCF7Y3RHAODOXZVKFMZ7FNO2ZFEZUMR4CO \
   --source my-key \
   --network testnet \
-  -- get_certificate \
-  --hash aabbccddeeff00112233445566778899aabbccddeeff00112233445566778899
+  -- declare_emergency
+```
+
+**Withdraw funds**
+```bash
+stellar contract invoke \
+  --id CCHK4RPWA66DAMY4BAZOTGRCF7Y3RHAODOXZVKFMZ7FNO2ZFEZUMR4CO \
+  --source my-key \
+  --network testnet \
+  -- withdraw \
+  --coordinator <YOUR_ADDRESS> \
+  --token CBIELTK6YBZJU5UP2WWQEUCYKLPU6AUNZ2BQ4WWFEIE3USCIHMXQDAMA \
+  --amount 300000000 \
+  --purpose "Typhoon relief - Region IV-A"
+```
+
+**Check balance**
+```bash
+stellar contract invoke \
+  --id CCHK4RPWA66DAMY4BAZOTGRCF7Y3RHAODOXZVKFMZ7FNO2ZFEZUMR4CO \
+  --source my-key \
+  --network testnet \
+  -- get_balance
 ```
 
 ---
 
 ## Tests
 
-| Test | Type | Coverage |
-|---|---|---|
-| `test_register_and_reward_student` | Happy path | Register cert → verify → reward → assert balance delta |
-| `test_duplicate_certificate_rejected` | Edge case | Same hash submitted twice → `DuplicateCertificate` error returned |
-| `test_certificate_storage_state` | State verification | Stored record fields match inputs; verify true/false for correct/wrong owner |
+| Test | Coverage |
+|---|---|
+| `test_initialize` | Zero balances, emergency flag off at deploy |
+| `test_single_donation` | Donor transfer + balance update |
+| `test_multiple_donors` | Fund accumulation across 3 donors |
+| `test_emergency_lifecycle` | Declare → verify active → lift → verify inactive |
+| `test_withdraw_during_emergency` | Two sequential withdrawals, correct cumulative state |
 
 ---
 
 ## Project Structure
 
 ```
-stellaroid-earn/
+tulongchain/
 ├── contracts/
 │   ├── src/
-│   │   ├── lib.rs        # Smart contract: registry, reward, verify, pay
-│   │   └── test.rs       # 3 test cases
+│   │   ├── lib.rs       # Smart contract (donate, emergency gate, withdraw)
+│   │   └── test.rs      # 5 test cases
 │   └── Cargo.toml
 ├── frontend/
 │   ├── src/
 │   │   ├── App.tsx
 │   │   └── components/
-│   │       ├── CertForm.tsx
-│   │       ├── VerifyPanel.tsx
-│   │       └── RewardDashboard.tsx
-│   └── .env              # VITE_CONTRACT_ID=<YOUR_CONTRACT_ID>
+│   └── .env             # VITE_CONTRACT_ID=CCHK4RPWA66DAMY4BAZOTGRCF7Y3RHAODOXZVKFMZ7FNO2ZFEZUMR4CO
 └── README.md
 ```
 
@@ -289,26 +238,14 @@ stellaroid-earn/
 
 ## Target Users
 
-**Students / Graduates**
-- Fresh graduates at Philippine universities (UP, DLSU, Ateneo, UST)
-- Bootcamp completers at Zuitt, Kodego, and similar coding schools
-- OFWs with foreign credentials seeking Philippine employer verification
+**Donors**
+- OFWs (Overseas Filipino Workers) sending relief money home during typhoon season
+- Filipino diaspora in the US, Canada, UAE — currently using Western Union or Remitly
+- Local NGO members in Luzon, Visayas, Mindanao who want transparent donation tracking
 
-**Institutions / Issuers**
-- University registrars issuing diplomas and transcript-backed credentials
-- Bootcamps issuing completion certificates with skills metadata
-- DAOs issuing contributor credentials and proof-of-work NFTs
-
-**Employers**
-- Philippine tech companies verifying developer skills before onboarding
-- Remote-first companies hiring across SEA who need instant credential checks
-- DeFi protocols gating financial products behind verified credential ownership
-
----
-
-## Vision
-
-StellaroidEarn is not just a certificate registry — it is the on-chain identity layer for the Philippine gig and formal economy. Once a student's credentials are on-chain, they become composable primitives: collateral for micro-loans, gates for DAO membership, proof of work for payroll automation, and unlock conditions for DeFi yield products. Every certificate issued is a step toward a fully verifiable, financially sovereign student identity.
+**Coordinators / Admins**
+- Verified barangay relief coordinators managing fund release during active emergencies
+- LGU-affiliated organizations that need auditable disbursement records
 
 ---
 
@@ -316,11 +253,11 @@ StellaroidEarn is not just a certificate registry — it is the on-chain identit
 
 | Day | Task |
 |---|---|
-| Day 1 | Set up Rust + Soroban CLI, write contract functions, run tests locally |
-| Day 2 | Deploy to Stellar Testnet, scaffold React/Vite frontend with Freighter |
-| Day 3 | Integrate `register_certificate` and `verify_certificate` in frontend |
-| Day 4 | Add `reward_student` dashboard + Convex real-time event feed, polish UI |
-| Day 5 | Record demo, finalize README, submit on Rise In |
+| Day 1 | Set up Rust + Soroban CLI, write and test contract locally |
+| Day 2 | Deploy contract to Stellar Testnet, scaffold React/Vite frontend |
+| Day 3 | Integrate Freighter wallet + contract invocations in frontend |
+| Day 4 | Add Convex real-time feed, polish UI, record demo |
+| Day 5 | Submit on Rise In with GitHub + Contract ID |
 
 ---
 
@@ -328,19 +265,18 @@ StellaroidEarn is not just a certificate registry — it is the on-chain identit
 
 | Field | Value |
 |---|---|
-| **GitHub Repository** | `https://github.com/<your-username>/stellaroid-earn` |
-| **Contract ID** | `<YOUR_CONTRACT_ID>` |
-| **Stellar Expert** | `https://stellar.expert/explorer/testnet/contract/<YOUR_CONTRACT_ID>` |
+| **GitHub Repository** | `https://github.com/<your-username>/tulongchain` |
+| **Contract ID** | `CCHK4RPWA66DAMY4BAZOTGRCF7Y3RHAODOXZVKFMZ7FNO2ZFEZUMR4CO` |
+| **Stellar Expert** | [View Contract →](https://stellar.expert/explorer/testnet/contract/CCHK4RPWA66DAMY4BAZOTGRCF7Y3RHAODOXZVKFMZ7FNO2ZFEZUMR4CO) |
 | **Program** | [Rise In — Stellar Philippines UniTour](https://www.risein.com/programs/stellar-philippines-unitour-university-of-east-caloocan) |
 
 **Short Description:**
-> StellaroidEarn is an on-chain credential registry on Stellar. Universities and bootcamps register certificate hashes anchored to student wallets. Students earn XLM rewards upon issuance, anyone can verify in under 5 seconds, and employers pay directly to verified wallet addresses — making every credential tamper-proof and every peso traceable.
+> TulongChain is a community disaster relief fund on Stellar. Donors send USDC into a Soroban smart contract escrow that only releases funds when a verified admin declares a disaster emergency — making every centavo traceable and tamper-proof.
 
 ### Submission Checklist
 
-- [ ] `cargo test` passes (3 tests)
-- [ ] Contract deployed to Stellar Testnet
-- [ ] Contract ID saved (starts with `C...`)
+- [ ] `cargo test` passes (5 tests)
+- [ ] Contract deployed to Stellar Testnet (`CCHK4RPWA66DAMY4BAZOTGRCF7Y3RHAODOXZVKFMZ7FNO2ZFEZUMR4CO`)
 - [ ] GitHub repository is public
 - [ ] Frontend runs locally without errors
 - [ ] Rise In submission form completed
@@ -357,8 +293,7 @@ StellaroidEarn is not just a certificate registry — it is the on-chain identit
 | Freighter Wallet | https://freighter.app |
 | Stellar Expert (Testnet) | https://stellar.expert/explorer/testnet |
 | Deploy Guide | https://github.com/armlynobinguar/Stellar-Bootcamp-2026 |
-| Full-Stack Example | https://github.com/armlynobinguar/community-treasury |
-| Rise In Program | https://www.risein.com/programs/stellar-philippines-unitour-university-of-east-caloocan |
+| Community Treasury Example | https://github.com/armlynobinguar/community-treasury |
 
 ---
 
@@ -368,4 +303,4 @@ MIT License — see [LICENSE](LICENSE) for details.
 
 ---
 
-*Built for Filipino students and graduates 🇵🇭 · Stellar Philippines UniTour Bootcamp 2026*
+*Built for Filipino families 🇵🇭 · Stellar Philippines UniTour Bootcamp 2026*
