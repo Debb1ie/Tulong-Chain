@@ -6,7 +6,8 @@
     "scripts": {
         "dev": "vite",
         "build": "tsc && vite build",
-        "preview": "vite preview"
+        "preview": "vite preview",
+        "convex": "convex"
     },
     "dependencies": {
         "@stellar/stellar-sdk": "^12.3.0",
