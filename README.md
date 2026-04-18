@@ -1,4 +1,4 @@
-#  TulongChain
+# TulongChain 
 
 **Community disaster relief fund for Filipino families — transparent, instant, on-chain.**
 
@@ -13,102 +13,107 @@ Built on **Stellar + Soroban** · Stellar Philippines UniTour Bootcamp 2026
 
 ---
 
-##  Live Contract
+##  Live Links
 
-**Deployed on Stellar Testnet**
+| Resource | Link |
+|---|---|
+| **Frontend (Vercel)** | [tulong-chain.vercel.app](https://tulong-chain.vercel.app/) |
+| **GitHub Repository** | [github.com/Debb1ie/Tulong-Chain](https://github.com/Debb1ie/Tulong-Chain) |
+| **Convex Dashboard** | [dashboard.convex.dev/t/deborahgrace0118/frontend-9d9b7/exciting-hawk-153](https://dashboard.convex.dev/t/deborahgrace0118/frontend-9d9b7/exciting-hawk-153) |
+| **Stellar Expert (Testnet)** | [View Contract →](https://stellar.expert/explorer/testnet/contract/CCHK4RPWA66DAMY4BAZOTGRCF7Y3RHAODOXZVKFMZ7FNO2ZFEZUMR4CO) |
+
+### Deployed Contract (Stellar Testnet)
 
 ```
 CCHK4RPWA66DAMY4BAZOTGRCF7Y3RHAODOXZVKFMZ7FNO2ZFEZUMR4CO
 ```
 
- **[View on Stellar Expert →](https://stellar.expert/explorer/testnet/contract/CCHK4RPWA66DAMY4BAZOTGRCF7Y3RHAODOXZVKFMZ7FNO2ZFEZUMR4CO)**
-
 ---
 
-## The Problem
+##  The Problem
 
-Natural disasters hit the Philippines every typhoon season. Relief fundraising is scattered across GCash, bank transfers, and social media group chats.
+Natural disasters hit the Philippines every typhoon season — yet relief fundraising still runs through GCash group chats, manual bank transfers, and screenshots shared on Facebook.
 
 | Pain Point | Reality |
 |---|---|
 | Settlement time | 3–5 business days |
 | Transfer fees | 5–10% per donation lost |
 | Transparency | Screenshot-based trust |
-| Speed during emergencies | Coordinators wait for bank clearance windows |
+| Emergency speed | Coordinators wait for bank clearance windows |
 
-Typhoon victims wait **days** for food and medicine while coordinators lose a cut of every peso to fees and manual tracking errors.
+Typhoon victims wait **days** for food and medicine while coordinators lose a cut of every peso to fees, exchange spreads, and manual tracking errors.
 
 ---
 
-## The Solution
+##  The Solution
 
-TulongChain lets anyone donate USDC directly into a **Soroban smart contract escrow**. Funds stay locked on-chain until a verified coordinator declares a disaster emergency. Every donation and withdrawal is publicly traceable on Stellar Expert — no middlemen, no mystery.
+TulongChain lets anyone donate USDC directly into a **Soroban smart contract escrow**. Funds stay locked on-chain until a verified coordinator declares a disaster emergency. Every donation and withdrawal is permanently traceable on Stellar Expert — no middlemen, no mystery, no missing money.
 
 | Metric | TulongChain |
 |---|---|
 |  Settlement | Under 5 seconds |
 |  Transaction fee | Under $0.01 |
-|  Auditability | Every peso on-chain |
+|  Auditability | Every centavo on-chain |
 |  Fund security | Locked until emergency declared |
 
 ---
 
-## How It Works
+## ⚙️ How It Works
 
 ```
-Donor (Freighter)
-      │
-      ▼ donate(donor, token, amount)
-┌─────────────────────────────┐
-│   TulongChain Soroban       │
-│   Contract Escrow           │  ← Funds locked here
-│                             │
-│  [Emergency = false]        │  ← Withdrawals BLOCKED
-│  [Emergency = true]  ───────┼──► withdraw(coordinator, amount, purpose)
-└─────────────────────────────┘
-      │
-      ▼ Soroban Events
-Stellar Expert · Convex Real-Time DB
+Donor (Freighter Wallet)
+        │
+        ▼  donate(donor, token, amount)
+┌────────────────────────────────┐
+│     TulongChain Soroban        │
+│     Contract Escrow            │  ← Funds locked here
+│                                │
+│  [emergency = false] ──────────┼──► Withdrawals BLOCKED
+│  [emergency = true]  ──────────┼──► withdraw(coordinator, amount, purpose)
+└────────────────────────────────┘
+        │
+        ▼  Soroban Events
+Stellar Expert · Convex Real-Time Feed
 ```
 
-**Transaction flow (demo-able in under 2 minutes):**
+### Transaction Flow (demo-able in under 2 minutes)
 
-1. Donor connects Freighter wallet → enters USDC amount → clicks **Donate**
-2. `donate()` transfers USDC into the contract escrow; `donated` event emitted
+1. Donor connects **Freighter wallet** → enters USDC amount → clicks **Donate**
+2. `donate()` transfers USDC into the contract escrow; a `donated` event is emitted
 3. Admin clicks **Declare Emergency** → `declare_emergency()` sets the flag to `true`
-4. `withdraw()` transfers USDC to coordinator with a purpose string stored on-chain
-5. Dashboard shows live `TotalDonated`, `Balance`, and `TotalWithdrawn`
+4. `withdraw()` sends USDC to the coordinator with a purpose string stored on-chain
+5. Dashboard shows live `TotalDonated`, `Balance`, and `TotalWithdrawn` via Convex
 
 ---
 
-## Stellar Features Used
+## 🛰️ Stellar Features Used
 
 | Feature | How It's Used |
 |---|---|
-| **Soroban Smart Contracts** | Core escrow logic — `donate()`, `declare_emergency()`, `withdraw()`, `lift_emergency()` all enforced on-chain |
-| **USDC on Stellar** | Stablecoin donations eliminate XLM price volatility — predictable, stable amounts |
-| **Trustlines** | Recipients must opt-in to USDC before receiving funds (SEP-41 compliance) |
-| **Soroban Events** | `donated`, `emergency_declared`, `emergency_lifted`, `withdrawn` emitted on every state change |
+| **Soroban Smart Contracts** | Core escrow logic — `donate()`, `declare_emergency()`, `withdraw()`, and `lift_emergency()` all enforced on-chain with no trusted third party |
+| **USDC on Stellar** | Stablecoin donations eliminate XLM price volatility — donors and coordinators always know the real-peso equivalent |
+| **Trustlines** | Recipients must opt-in to USDC before receiving funds, ensuring SEP-41 compliance |
+| **Soroban Events** | `donated`, `emergency_declared`, `emergency_lifted`, `withdrawn` emitted on every state change for public auditability |
 
 ---
 
-## Prerequisites
+##  Prerequisites
 
 - [Rust](https://rustup.rs) stable toolchain
 - WASM target: `rustup target add wasm32-unknown-unknown`
 - [Stellar CLI](https://developers.stellar.org/docs/tools/stellar-cli): `cargo install --locked stellar-cli --features opt`
 - [Node.js](https://nodejs.org) v18+
-- [Freighter Wallet](https://www.freighter.app) (set to Testnet)
+- [Freighter Wallet](https://www.freighter.app) browser extension (set to **Testnet**)
 
 ---
 
-## Getting Started
+##  Getting Started
 
-### 1. Clone & Test
+### 1. Clone & Run Tests
 
 ```bash
-git clone https://github.com/<your-username>/tulongchain.git
-cd tulongchain/contracts
+git clone https://github.com/Debb1ie/Tulong-Chain.git
+cd Tulong-Chain/contracts
 cargo test
 ```
 
@@ -125,7 +130,7 @@ test test::test_withdraw_during_emergency ... ok
 test result: ok. 5 passed; 0 failed
 ```
 
-### 2. Build
+### 2. Build the Contract
 
 ```bash
 cargo build --target wasm32-unknown-unknown --release
@@ -134,7 +139,7 @@ cargo build --target wasm32-unknown-unknown --release
 ### 3. Deploy to Testnet
 
 ```bash
-# Generate identity (first time only)
+# Generate and fund identity (first time only)
 stellar keys generate --global my-key --network testnet
 stellar keys fund my-key --network testnet
 
@@ -145,7 +150,7 @@ stellar contract deploy \
   --network testnet
 ```
 
-### 4. Initialize
+### 4. Initialize the Contract
 
 ```bash
 stellar contract invoke \
@@ -156,11 +161,20 @@ stellar contract invoke \
   --admin <YOUR_WALLET_ADDRESS>
 ```
 
+### 5. Run the Frontend
+
+```bash
+cd frontend
+npm install
+cp .env.example .env    # set VITE_CONTRACT_ID
+npm run dev
+```
+
 ---
 
-## Contract Invocations
+##  Contract Invocations
 
-**Donate USDC**
+**Donate USDC** (500000000 = 50 USDC in stroops)
 ```bash
 stellar contract invoke \
   --id CCHK4RPWA66DAMY4BAZOTGRCF7Y3RHAODOXZVKFMZ7FNO2ZFEZUMR4CO \
@@ -194,6 +208,15 @@ stellar contract invoke \
   --purpose "Typhoon relief - Region IV-A"
 ```
 
+**Lift emergency**
+```bash
+stellar contract invoke \
+  --id CCHK4RPWA66DAMY4BAZOTGRCF7Y3RHAODOXZVKFMZ7FNO2ZFEZUMR4CO \
+  --source my-key \
+  --network testnet \
+  -- lift_emergency
+```
+
 **Check balance**
 ```bash
 stellar contract invoke \
@@ -205,51 +228,52 @@ stellar contract invoke \
 
 ---
 
-## Tests
+##  Tests
 
-| Test | Coverage |
+| Test | What It Verifies |
 |---|---|
-| `test_initialize` | Zero balances, emergency flag off at deploy |
-| `test_single_donation` | Donor transfer + balance update |
-| `test_multiple_donors` | Fund accumulation across 3 donors |
+| `test_initialize` | Zero balances and emergency flag off at deploy |
+| `test_single_donation` | Donor transfer completes and balance updates correctly |
+| `test_multiple_donors` | Fund accumulation works across 3 independent donors |
 | `test_emergency_lifecycle` | Declare → verify active → lift → verify inactive |
-| `test_withdraw_during_emergency` | Two sequential withdrawals, correct cumulative state |
+| `test_withdraw_during_emergency` | Two sequential withdrawals produce correct cumulative state |
 
 ---
 
-## Project Structure
+##  Project Structure
 
 ```
-tulongchain/
+Tulong-Chain/
 ├── contracts/
 │   ├── src/
-│   │   ├── lib.rs       # Smart contract (donate, emergency gate, withdraw)
+│   │   ├── lib.rs       # Smart contract: donate, emergency gate, withdraw
 │   │   └── test.rs      # 5 test cases
 │   └── Cargo.toml
 ├── frontend/
 │   ├── src/
 │   │   ├── App.tsx
 │   │   └── components/
-│   └── .env             # VITE_CONTRACT_ID=CCHK4RPWA66DAMY4BAZOTGRCF7Y3RHAODOXZVKFMZ7FNO2ZFEZUMR4CO
+│   ├── .env             # VITE_CONTRACT_ID=CCHK4RPWA66DAMY4...
+│   └── package.json
 └── README.md
 ```
 
 ---
 
-## Target Users
+##  Target Users
 
 **Donors**
 - OFWs (Overseas Filipino Workers) sending relief money home during typhoon season
-- Filipino diaspora in the US, Canada, UAE — currently using Western Union or Remitly
-- Local NGO members in Luzon, Visayas, Mindanao who want transparent donation tracking
+- Filipino diaspora in the US, Canada, UAE — currently paying Western Union or Remitly fees
+- Local NGO members in Luzon, Visayas, and Mindanao who want transparent donation tracking
 
 **Coordinators / Admins**
 - Verified barangay relief coordinators managing fund release during active emergencies
-- LGU-affiliated organizations that need auditable disbursement records
+- LGU-affiliated organizations that need auditable disbursement records for accountability reports
 
 ---
 
-## MVP Timeline
+##  MVP Timeline
 
 | Day | Task |
 |---|---|
@@ -261,13 +285,15 @@ tulongchain/
 
 ---
 
-## Submission
+##  Submission
 
 | Field | Value |
 |---|---|
-| **GitHub Repository** | `https://github.com/<your-username>/tulongchain` |
+| **GitHub Repository** | [github.com/Debb1ie/Tulong-Chain](https://github.com/Debb1ie/Tulong-Chain) |
 | **Contract ID** | `CCHK4RPWA66DAMY4BAZOTGRCF7Y3RHAODOXZVKFMZ7FNO2ZFEZUMR4CO` |
 | **Stellar Expert** | [View Contract →](https://stellar.expert/explorer/testnet/contract/CCHK4RPWA66DAMY4BAZOTGRCF7Y3RHAODOXZVKFMZ7FNO2ZFEZUMR4CO) |
+| **Frontend** | [tulong-chain.vercel.app](https://tulong-chain.vercel.app/) |
+| **Convex Dashboard** | [View Real-Time Feed →](https://dashboard.convex.dev/t/deborahgrace0118/frontend-9d9b7/exciting-hawk-153) |
 | **Program** | [Rise In — Stellar Philippines UniTour](https://www.risein.com/programs/stellar-philippines-unitour-university-of-east-caloocan) |
 
 **Short Description:**
@@ -276,14 +302,15 @@ tulongchain/
 ### Submission Checklist
 
 - [ ] `cargo test` passes (5 tests)
-- [ ] Contract deployed to Stellar Testnet (`CCHK4RPWA66DAMY4BAZOTGRCF7Y3RHAODOXZVKFMZ7FNO2ZFEZUMR4CO`)
+- [ ] Contract deployed to Stellar Testnet
 - [ ] GitHub repository is public
-- [ ] Frontend runs locally without errors
+- [ ] Frontend runs on Vercel without errors
+- [ ] Convex real-time feed connected
 - [ ] Rise In submission form completed
 
 ---
 
-## Resources
+##  Resources
 
 | Resource | Link |
 |---|---|
