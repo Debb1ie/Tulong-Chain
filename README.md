@@ -1,4 +1,4 @@
-# 🫂 TulongChain
+#  TulongChain
 
 **Community disaster relief fund for Filipino families — transparent, instant, on-chain.**
 
@@ -13,7 +13,7 @@ Built on **Stellar + Soroban** · Stellar Philippines UniTour Bootcamp 2026
 
 ---
 
-## 🌐 Live Contract
+##  Live Contract
 
 **Deployed on Stellar Testnet**
 
@@ -21,7 +21,7 @@ Built on **Stellar + Soroban** · Stellar Philippines UniTour Bootcamp 2026
 CCHK4RPWA66DAMY4BAZOTGRCF7Y3RHAODOXZVKFMZ7FNO2ZFEZUMR4CO
 ```
 
-🔍 **[View on Stellar Expert →](https://stellar.expert/explorer/testnet/contract/CCHK4RPWA66DAMY4BAZOTGRCF7Y3RHAODOXZVKFMZ7FNO2ZFEZUMR4CO)**
+ **[View on Stellar Expert →](https://stellar.expert/explorer/testnet/contract/CCHK4RPWA66DAMY4BAZOTGRCF7Y3RHAODOXZVKFMZ7FNO2ZFEZUMR4CO)**
 
 ---
 
