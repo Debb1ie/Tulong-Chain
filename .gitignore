@@ -1,0 +1,15 @@
+# Rust / Soroban
+target/
+Cargo.lock
+
+# Node / Frontend
+node_modules/
+dist/
+.env
+
+# Convex
+frontend/convex/_generated/
+
+# OS
+.DS_Store
+Thumbs.db
