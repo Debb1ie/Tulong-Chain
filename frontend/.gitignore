@@ -4,6 +4,5 @@ dist/
 node_modules/
 *.log
 tsconfig.tsbuildinfo
-convex/_generated/
 .clcache/
 .vercel/
