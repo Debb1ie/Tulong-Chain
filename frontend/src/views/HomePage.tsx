@@ -348,14 +348,6 @@ export default function HomePage({
                   </button>
                 </div>
               )}
-              <a
-                href="https://github.com/armlynobinguar/Stellar-Bootcamp-2026"
-                target="_blank"
-                rel="noreferrer"
-                className="btn-outline"
-              >
-                Deploy Guide -&gt;
-              </a>
             </div>
 
             <div className="hero-pills">
@@ -662,7 +654,6 @@ export default function HomePage({
               <div className="footer-col-title">Explore</div>
               {[
                 { label: "Stellar Expert", href: "https://stellar.expert/explorer/testnet" },
-                { label: "Deploy Guide", href: "https://github.com/armlynobinguar/Stellar-Bootcamp-2026" },
                 { label: "Rise In Program", href: "https://www.risein.com/programs/stellar-philippines-unitour-university-of-east-caloocan" },
               ].map(({ label, href }) => (
                 <a key={label} href={href} target="_blank" rel="noreferrer" className="footer-link">
