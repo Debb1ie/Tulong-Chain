@@ -373,7 +373,7 @@ export default function DashboardPage({ wallet, onBack }: Props) {
         </div>
 
         <div className="dash-footer">
-          <span>TulongChain - Stellar Philippines UniTour 2026 - UE Caloocan</span>
+          <span>TulongChain - Stellar Philippines 2026</span>
           <span className="dash-footer-note">All transactions are recorded on the Stellar blockchain and cannot be modified.</span>
         </div>
       </div>

@@ -298,7 +298,7 @@ export default function HomePage({
           <div className="hero-left">
             <span className="hero-eyebrow">
               <span className="eyebrow-dot" />
-              Stellar Philippines UniTour 2026 - UE Caloocan
+              Stellar Philippines 2026
             </span>
 
             <h1 className="hero-h1">
@@ -675,7 +675,7 @@ export default function HomePage({
 
         <div className="footer-bottom">
           <span className="footer-copy">
-            2026 TulongChain - Stellar Philippines UniTour - University of East Caloocan
+            2026 TulongChain - Stellar Philippines
           </span>
           <span className="footer-note">Made for Filipino families</span>
         </div>
