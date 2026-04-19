@@ -295,6 +295,7 @@ Tulong-Chain/
 | **Frontend** | [tulong-chain.vercel.app](https://tulong-chain.vercel.app/) |
 | **Convex Dashboard** | [View Real-Time Feed →](https://dashboard.convex.dev/t/deborahgrace0118/frontend-9d9b7/exciting-hawk-153) |
 | **Program** | [Rise In — Stellar Philippines UniTour](https://www.risein.com/programs/stellar-philippines-unitour-university-of-east-caloocan) |
+| **Documentation** | [Link:https://docs.google.com/document/d/1rOwTdzjz1XM0H7peBI4O4wGiXGneYo5BKjE9clq3rdc/edit?tab=t.0) |
 
 **Short Description:**
 > TulongChain is a community disaster relief fund on Stellar. Donors send USDC into a Soroban smart contract escrow that only releases funds when a verified admin declares a disaster emergency — making every centavo traceable and tamper-proof.
