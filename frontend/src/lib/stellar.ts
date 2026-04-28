@@ -38,7 +38,6 @@ async function readContract(method: string, args: xdr.ScVal[] = [], useCache = t
   }
 
   const contract = new Contract(CONFIG.contractId);
-  // Use a dummy source for simulation reads
   const dummyAccount = await server.getAccount(
     "GAAZI4TCR3TY5OJHCTJC2A4QSY6CJWJH5IAJTGKIN2ER7LBNVKOCCWN"
   ).catch(() => null);
@@ -60,7 +59,6 @@ async function readContract(method: string, args: xdr.ScVal[] = [], useCache = t
 
   const result = simResult.result?.retval ? scValToNative(simResult.result.retval) : null;
   
-  // Cache the result
   cache.set(cacheKey, {
     value: result,
     expiry: Date.now() + CACHE_TTL
@@ -86,7 +84,6 @@ async function invokeContract(
     .setTimeout(30)
     .build();
 
-  // Simulate to get footprint
   const simResult = await server.simulateTransaction(tx);
   if (SorobanRpc.Api.isSimulationError(simResult)) {
     throw new Error(`Simulation failed: ${simResult.error}`);
@@ -103,10 +100,8 @@ async function invokeContract(
     throw new Error(`Submit failed: ${JSON.stringify(submitResult.errorResult)}`);
   }
 
-  // Clear cache on successful transaction since state changed
   cache.clear();
 
-  // Poll for completion
   let getResult = await server.getTransaction(submitResult.hash);
   while (getResult.status === SorobanRpc.Api.GetTransactionStatus.NOT_FOUND) {
     await new Promise((r) => setTimeout(r, 1000));
@@ -177,4 +172,54 @@ export async function getBalance(useCache = true): Promise<number> {
 export async function isEmergency(useCache = true): Promise<boolean> {
   const val = await readContract("is_emergency", [], useCache);
   return Boolean(val);
+}
+
+// ── Advanced Features ─────────────────────────────────────────────────────────
+
+export async function isPaused(useCache = true): Promise<boolean> {
+  const val = await readContract("is_paused", [], useCache);
+  return Boolean(val);
+}
+
+export async function getTimelockDuration(useCache = true): Promise<number> {
+  const val = await readContract("get_timelock_duration", [], useCache);
+  return val ? Number(val) : 0;
+}
+
+export async function getTimelockInfo(useCache = true): Promise<{declared_at: number, activates_at: number}> {
+  const val = await readContract("get_emergency_timelock", [], useCache) as {declared_at: number, activates_at: number} | null;
+  return val || {declared_at: 0, activates_at: 0};
+}
+
+export async function pause(callerAddress: string): Promise<string> {
+  const { txHash } = await invokeContract(callerAddress, "pause", []);
+  return txHash;
+}
+
+export async function unpause(callerAddress: string): Promise<string> {
+  const { txHash } = await invokeContract(callerAddress, "unpause", []);
+  return txHash;
+}
+
+export async function setTimelock(callerAddress: string, seconds: number): Promise<string> {
+  const { txHash } = await invokeContract(callerAddress, "set_timelock", [
+    nativeToScVal(seconds, { type: "u64" })
+  ]);
+  return txHash;
+}
+
+// Batch operations (future)
+export async function batchDonate(
+  callerAddress: string,
+  batches: Array<{token: string, amount: number, asset: string}>
+): Promise<string> {
+  throw new Error("Batch donate UI not yet implemented");
+}
+
+export async function batchWithdraw(
+  callerAddress: string,
+  token: string,
+  batches: Array<{purpose: string, amount: number}>
+): Promise<string> {
+  throw new Error("Batch withdraw UI not yet implemented");
 }

@@ -606,6 +606,34 @@ body::before {
     transform: none;
 }
 
+.btn-small {
+    font-family: var(--display);
+    font-size: 0.85rem;
+    font-weight: 900;
+    background: var(--yellow);
+    color: var(--black);
+    border: 2px solid var(--black-4);
+    border-radius: var(--r-pill);
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    transition: transform var(--t-base), box-shadow var(--t-fast);
+    display: inline-block;
+}
+.btn-small:hover {
+    transform: translate(-1px, -1px);
+    box-shadow: var(--sh-yellow-hover);
+}
+.btn-small:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+.btn-warn {
+    background: var(--orange);
+    color: white;
+    border-color: var(--black);
+}
+
 .spinner {
     display: inline-block;
     width: 16px;
@@ -1954,6 +1982,42 @@ body::before {
     }
 }
 
+/* Paused Banner */
+
+.paused-banner {
+    background: var(--yellow);
+    color: var(--black);
+    font-family: var(--display);
+    font-size: 0.95rem;
+    font-weight: 900;
+    text-align: center;
+    padding: 0.85rem 1.5rem;
+    border-bottom: 3px solid var(--black);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+/* Timelock Banner */
+
+.timelock-banner {
+    background: var(--orange);
+    color: white;
+    font-family: var(--display);
+    font-size: 0.95rem;
+    font-weight: 900;
+    text-align: center;
+    padding: 0.85rem 1.5rem;
+    border-bottom: 3px solid var(--black);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
 .emergency-icon {
     font-size: 1.1rem;
 }
@@ -2737,11 +2801,47 @@ body::before {
     margin-bottom: 1rem;
 }
 
-.admin-panel p {
-    font-size: 0.875rem;
+.admin-panel h4 {
+    margin-bottom: 1rem;
+    color: var(--black);
+    font-family: var(--display);
+}
+
+.admin-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    justify-content: center;
+    align-items: flex-end;
+    margin-bottom: 1rem;
+}
+
+.control-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: flex-start;
+}
+
+.control-group label {
+    font-size: 0.85rem;
     font-weight: 700;
-    color: var(--red-2);
-    margin-bottom: 1.1rem;
+    color: var(--black);
+    font-family: var(--display);
+}
+
+.control-group input {
+    padding: 0.6rem 0.8rem;
+    border: 2px solid var(--black);
+    border-radius: var(--r-lg);
+    font-size: 1rem;
+    min-width: 180px;
+}
+
+.admin-note {
+    font-size: 0.75rem;
+    color: var(--gray-5);
+    font-family: var(--display);
 }
 
 .btn-danger {

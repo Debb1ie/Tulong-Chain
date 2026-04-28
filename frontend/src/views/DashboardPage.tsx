@@ -11,6 +11,12 @@ import {
   getTotalWithdrawn,
   getBalance,
   isEmergency,
+  isPaused,
+  getTimelockDuration,
+  getTimelockInfo,
+  pause,
+  unpause,
+  setTimelock,
 } from "../lib/stellar";
 import { CONFIG } from "../lib/config";
 import type { WalletState, FundStats } from "../types";
@@ -27,6 +33,12 @@ export default function DashboardPage({ wallet, onBack }: Props) {
     balance: 0,
     isEmergency: false,
   });
+  const [paused, setPaused] = useState<boolean>(false);
+  const [timelockDuration, setTimelockDuration] = useState<number>(0);
+  const [timelockInfo, setTimelockInfo] = useState<{ declared_at: number; activates_at: number }>({
+    declared_at: 0,
+    activates_at: 0,
+  });
   const [refreshing, setRefreshing] = useState(false);
   const [lastRefresh, setLastRefresh] = useState<Date>(new Date());
   const [contractXlmBalance, setContractXlmBalance] = useState<string>("0");
@@ -36,13 +48,19 @@ export default function DashboardPage({ wallet, onBack }: Props) {
   const refreshStats = useCallback(async (silent = false) => {
     if (!silent) setRefreshing(true);
     try {
-      const [donated, withdrawn, balance, emergency] = await Promise.all([
+      const [donated, withdrawn, balance, emergency, pausedState, tlDuration, tlInfo] = await Promise.all([
         getTotalDonated(!silent),
         getTotalWithdrawn(!silent),
         getBalance(!silent),
         isEmergency(!silent),
+        isPaused(!silent),
+        getTimelockDuration(!silent),
+        getTimelockInfo(!silent),
       ]);
       setStats({ totalDonated: donated, totalWithdrawn: withdrawn, balance, isEmergency: emergency });
+      setPaused(pausedState);
+      setTimelockDuration(tlDuration);
+      setTimelockInfo(tlInfo);
       setLastRefresh(new Date());
     } catch (err) {
       console.error("Failed to load stats:", err);
@@ -51,7 +69,7 @@ export default function DashboardPage({ wallet, onBack }: Props) {
     }
   }, []);
 
-   useEffect(() => {
+  useEffect(() => {
     refreshStats(true);
     const interval = setInterval(() => refreshStats(true), 30_000);
     return () => clearInterval(interval);
@@ -74,6 +92,28 @@ export default function DashboardPage({ wallet, onBack }: Props) {
     const interval = setInterval(fetchXlmBalance, 15000);
     return () => clearInterval(interval);
   }, []);
+
+  // Admin actions
+  const handlePause = async () => {
+    if (!wallet.address) return;
+    await pause(wallet.address);
+    refreshStats(false);
+  };
+
+  const handleUnpause = async () => {
+    if (!wallet.address) return;
+    await unpause(wallet.address);
+    refreshStats(false);
+  };
+
+  const handleSetTimelock = async (seconds: number) => {
+    if (!wallet.address) return;
+    await setTimelock(wallet.address, seconds);
+    refreshStats(false);
+  };
+
+  const now = Math.floor(Date.now() / 1000);
+  const isTimelockPending = !stats.isEmergency && timelockInfo.activates_at > now;
 
   return (
     <div className="dashboard-page">
@@ -117,6 +157,21 @@ export default function DashboardPage({ wallet, onBack }: Props) {
         </div>
       )}
 
+      {paused && (
+        <div className="paused-banner">
+          <span className="pause-icon">⏸</span>
+          <strong>CONTRACT PAUSED</strong> — All operations halted
+        </div>
+      )}
+
+      {isTimelockPending && (
+        <div className="timelock-banner">
+          <span className="timelock-icon">⏱</span>
+          Emergency declared — activates at{" "}
+          {new Date(timelockInfo.activates_at * 1000).toLocaleString()}
+        </div>
+      )}
+
       <div className="dashboard">
         <div className="stats-section">
           <div className="stats-grid">
@@ -147,6 +202,49 @@ export default function DashboardPage({ wallet, onBack }: Props) {
           </div>
         </div>
 
+        <div className="admin-panel">
+          <h4>Admin Tools</h4>
+          <div className="admin-controls">
+            <div className="control-group">
+              <label>Emergency Timelock (seconds, min 3600)</label>
+              <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
+                <input
+                  id="timelock-input"
+                  type="number"
+                  defaultValue={timelockDuration}
+                  min="3600"
+                  placeholder="e.g. 3600"
+                  style={{ flex: 1 }}
+                />
+                <button
+                  className="btn-small"
+                  onClick={() => {
+                    const val = Number((document.getElementById("timelock-input") as HTMLInputElement).value);
+                    if (val >= 3600) handleSetTimelock(val);
+                  }}
+                >
+                  Set Timelock
+                </button>
+              </div>
+            </div>
+
+            <div className="control-group">
+              {!paused ? (
+                <button className="btn-small btn-warn" onClick={handlePause} disabled={refreshing}>
+                  Pause Contract
+                </button>
+              ) : (
+                <button className="btn-small btn-primary" onClick={handleUnpause} disabled={refreshing}>
+                  Unpause
+                </button>
+              )}
+            </div>
+          </div>
+          <small className="admin-note">
+            These controls affect the entire contract. Changes are on-chain.
+          </small>
+        </div>
+
         <div className="donate-section">
           <DonateForm wallet={wallet} />
         </div>
@@ -169,7 +267,9 @@ export default function DashboardPage({ wallet, onBack }: Props) {
 
         <div className="dash-footer">
           <span>TulongChain — Stellar Testnet</span>
-          <span className="dash-footer-note">All transactions are recorded on-chain and publicly verifiable.</span>
+          <span className="dash-footer-note">
+            All transactions are recorded on-chain and publicly verifiable.
+          </span>
         </div>
       </div>
     </div>

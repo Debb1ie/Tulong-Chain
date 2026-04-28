@@ -1,6 +1,6 @@
-# TulongChain 
+# TulongChain
 
-**Community disaster relief fund for Filipino families — transparent, instant, on-chain.**
+**Community disaster relief fund for Filipino families — transparent, instant, on-chain, with advanced safety controls.**
 
 Built on **Stellar + Soroban** · Stellar Philippines UniTour Bootcamp 2026
 
@@ -8,29 +8,32 @@ Built on **Stellar + Soroban** · Stellar Philippines UniTour Bootcamp 2026
 [![Soroban](https://img.shields.io/badge/Smart%20Contract-Soroban-534AB7?style=flat-square)](https://soroban.stellar.org)
 [![Rust](https://img.shields.io/badge/Language-Rust-D85A30?style=flat-square&logo=rust&logoColor=white)](https://www.rust-lang.org)
 [![USDC](https://img.shields.io/badge/Token-USDC-2775CA?style=flat-square)](https://www.circle.com/usdc)
-[![Tests](https://img.shields.io/badge/Tests-9%20passing-639922?style=flat-square)](#tests)
-[![License: MIT](https://img.shields.io/badge/License-MIT-888780?style=flat-square)](LICENSE)
+[![Contract CI](https://github.com/Debb1ie/Tulong-Chain/actions/workflows/contracts.yml/badge.svg)](https://github.com/Debb1ie/Tulong-Chain/actions/workflows/contracts.yml)
+[![Frontend CI](https://github.com/Debb1ie/Tulong-Chain/actions/workflows/frontend.yml/badge.svg)](https://github.com/Debb1ie/Tulong-Chain/actions/workflows/frontend.yml)
 
 ---
 
-##  Live Links
+## Live Links
 
 | Resource | Link |
 |---|---|
 | **Frontend (Vercel)** | [tulong-chain.vercel.app](https://tulong-chain.vercel.app/) |
 | **GitHub Repository** | [github.com/Debb1ie/Tulong-Chain](https://github.com/Debb1ie/Tulong-Chain) |
-| **Convex Dashboard:** | [dashboard.convex.dev/t/deborahgrace0118/frontend-9d9b7/exciting-hawk-153](https://dashboard.convex.dev/t/deborahgrace0118/frontend-9d9b7/exciting-hawk-153) |
-| **Stellar Expert (Testnet)** | [View Contract →](https://stellar.expert/explorer/testnet/contract/CCHK4RPWA66DAMY4BAZOTGRCF7Y3RHAODOXZVKFMZ7FNO2ZFEZUMR4CO) |
+| **Convex Dashboard** | [dashboard.convex.dev/t/deborahgrace0118/frontend-9d9b7/exciting-hawk-153](https://dashboard.convex.dev/t/deborahgrace0118/frontend-9d9b7/exciting-hawk-153) |
+| **Stellar Expert (Testnet)** | [View Contract →](https://stellar.expert/explorer/testnet/contract/CBSX6H3XDLZQELJA2V2LKSELAUDSKRPVL64ZKUDUCFJWDOTDUUASP5IC) |
 
 ### Deployed Contract (Stellar Testnet)
 
 ```
-CCHK4RPWA66DAMY4BAZOTGRCF7Y3RHAODOXZVKFMZ7FNO2ZFEZUMR4CO
+CBSX6H3XDLZQELJA2V2LKSELAUDSKRPVL64ZKUDUCFJWDOTDUUASP5IC
 ```
+
+*Deployment transaction:* [5270fa4b921320c561f37007e3d9c48b9759db6366412a4dab25440658d0962a](https://stellar.expert/explorer/testnet/tx/5270fa4b921320c561f37007e3d9c48b9759db6366412a4dab25440658d0962a)  
+*Initialize transaction:* [6eb7533a803a1531279c04a9111c1b727235274ff2b06585403cb0685ec57132](https://stellar.expert/explorer/testnet/tx/6eb7533a803a1531279c04a9111c1b727235274ff2b06585403cb0685ec57132)
 
 ---
 
-##  The Problem
+## The Problem
 
 Natural disasters hit the Philippines every typhoon season — yet relief fundraising still runs through GCash group chats, manual bank transfers, and screenshots shared on Facebook. 
 
@@ -45,9 +48,16 @@ Typhoon victims wait **days** for food and medicine while coordinators lose a cu
 
 ---
 
-##  The Solution
+## The Solution
 
-TulongChain lets anyone donate USDC directly into a **Soroban smart contract escrow**. Funds stay locked on-chain until a verified coordinator declares a disaster emergency. Every donation and withdrawal is permanently traceable on Stellar Expert — no middlemen, no mystery, no missing money.
+**TulongChain** lets anyone donate USDC directly into a **Soroban smart contract escrow**. Funds stay locked on-chain until a verified admin declares a disaster emergency. Every donation and withdrawal is permanently traceable on Stellar Expert — no middlemen, no mystery, no missing money.
+
+**Advanced safety features** (production-grade):
+- **Pausable** – Admin can halt all operations in case of bug or attack
+- **Emergency Timelock** – Declared emergencies require a configurable delay (default 0 = instant, can be set to ≥1 h) before withdrawals activate
+- **Batch Donations** – Donors can batch multiple token transfers atomically (up to 50 per call)
+- **Batch Withdrawals** – Coordinators can release funds for multiple relief purposes in a single transaction (up to 20 per call)
+- **Immutable History** – Full on-chain audit trail of donations and withdrawals
 
 | Metric | TulongChain |
 |---|---|
@@ -55,49 +65,51 @@ TulongChain lets anyone donate USDC directly into a **Soroban smart contract esc
 |  Transaction fee | Under $0.01 |
 |  Auditability | Every centavo on-chain |
 |  Fund security | Locked until emergency declared |
+|  Emergency safety | Timelock prevents rushed withdrawals |
 
 ---
 
-## ⚙️ How It Works
+## How It Works
 
 ```
 Donor (Freighter Wallet)
         │
-        ▼  donate(donor, token, amount)
+        ▼  donate(donor, token, amount) / batch_donate(...)
 ┌────────────────────────────────┐
 │     TulongChain Soroban        │
 │     Contract Escrow            │  ← Funds locked here
 │                                │
+│  [paused = false] ─────────────┼──► Operations allowed
 │  [emergency = false] ──────────┼──► Withdrawals BLOCKED
-│  [emergency = true]  ──────────┼──► withdraw(coordinator, amount, purpose)
+│  [emergency = true] ───────────┼──► withdraw(...) / batch_withdraw(...)
 └────────────────────────────────┘
         │
         ▼  Soroban Events
 Stellar Expert · Convex Real-Time Feed
 ```
 
-### Transaction Flow (demo-able in under 2 minutes)
+### Advanced Emergency Lifecycle
 
-1. Donor connects **Freighter wallet** → enters USDC amount → clicks **Donate**
-2. `donate()` transfers USDC into the contract escrow; a `donated` event is emitted
-3. Admin clicks **Declare Emergency** → `declare_emergency()` sets the flag to `true`
-4. `withdraw()` sends USDC to the coordinator with a purpose string stored on-chain
-5. Dashboard shows live `TotalDonated`, `Balance`, and `TotalWithdrawn` via Convex
+1. **Admin declares** emergency → starts timelock countdown
+2. If timelock > 0, funds remain locked until countdown expires
+3. Admin may `activate_emergency` once countdown ends
+4. Withdrawals become possible until `lift_emergency`
 
 ---
 
-## 🛰️ Stellar Features Used
+## Stellar Features Used
 
 | Feature | How It's Used |
 |---|---|
-| **Soroban Smart Contracts** | Core escrow logic — `donate()`, `emergency gate`, `withdraw()` — enforced on-chain with no trusted third party |
-| **USDC Stablecoin** | Stable donations immune to XLM price swings — donors and coordinators always know the real-peso equivalent |
-| **Trustlines (SEP-41)** | Recipients must opt-in to USDC before receiving, ensuring protocol-level compliance |
-| **Soroban Events** | `donated`, `emergency_declared`, `withdrawn` — every state change emitted to Stellar Expert for public auditability |
+| **Soroban Smart Contracts** | Core escrow logic — `donate`, `batch_donate`, `pause`, `declare → timelock → activate`, `batch_withdraw` — on-chain enforcement |
+| **USDC Stablecoin** | Stable donations immune to XLM price swings |
+| **Inter-contract Calls** | `token::Client` calls to transfer any SEP-41 token (USDC, XLM, or future tokens) |
+| **Soroban Events** | `donated`, `emergency_declared`, `emergency_activated`, `batch_donated`, `paused`, `unpaused`, `withdrawn`, `batch_withdrawn` for public auditability |
+| **Testnet** | Fully operational on Stellar Testnet — try with test tokens |
 
 ---
 
-##  Prerequisites
+## Prerequisites
 
 - [Rust](https://rustup.rs) stable toolchain
 - WASM target: `rustup target add wasm32-unknown-unknown`
@@ -107,31 +119,30 @@ Stellar Expert · Convex Real-Time Feed
 
 ---
 
-##  Getting Started
+## Getting Started
 
-### 1. Clone & Run Tests
+### 1. Clone & Run Tests (Smart Contract)
 
 ```bash
 git clone https://github.com/Debb1ie/Tulong-Chain.git
 cd Tulong-Chain/contracts
-cargo test
+cargo test --release
 ```
 
-**Expected output:**
+**Expect output:**
 
 ```
-running 9 tests
+running 21 tests
 test test::test_initialize ... ok
-test test::test_emergency_lifecycle ... ok
-test test::test_emergency_toggle ... ok
-test test::test_single_donation ... ok
-test test::test_zero_donation ... ok
-test test::test_over_withdraw - should panic ... ok
-test test::test_withdraw_during_emergency ... ok
-test test::test_multiple_donors ... ok
-test test::test_donation_history_integrity ... ok
-
-test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.08s
+test test::test_donate ... ok
+test test::test_batch_donate ... ok
+test test::test_withdraw ... ok
+test test::test_batch_withdraw ... ok
+test test::test_timelock_with_delay ... ok
+test test::test_pause_unpause ... ok
+test test::test_advanced_complex_flow ... ok
+...
+test result: ok. 21 passed; 0 failed; 0 ignored; 0 measured
 ```
 
 ### 2. Build the Contract
@@ -140,12 +151,16 @@ test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; fini
 cargo build --target wasm32-unknown-unknown --release
 ```
 
+WASM binary: `target/wasm32-unknown-unknown/release/tulong_chain.wasm`
+
 ### 3. Deploy to Testnet
 
 ```bash
-# Generate and fund identity (first time only)
-stellar keys generate --global my-key --network testnet
-stellar keys fund my-key --network testnet
+# Create / use an identity (my-key)
+stellar keys generate my-key
+
+# Fund if needed via friendbot or transfer from another account
+curl "https://friendbot.stellar.org?account=$(stellar keys address my-key)"
 
 # Deploy
 stellar contract deploy \
@@ -153,6 +168,8 @@ stellar contract deploy \
   --source my-key \
   --network testnet
 ```
+
+Take note of the **Contract ID** returned.
 
 ### 4. Initialize the Contract
 
@@ -162,194 +179,215 @@ stellar contract invoke \
   --source my-key \
   --network testnet \
   -- initialize \
-  --admin <YOUR_WALLET_ADDRESS>
+  --admin <ADMIN_ADDRESS>
 ```
+
+After this, the contract is live and ready for donations.
 
 ### 5. Run the Frontend
 
 ```bash
 cd frontend
 npm install
-cp .env.example .env    # set VITE_CONTRACT_ID
+cp .env.example .env    # edit .env to set VITE_CONTRACT_ID if different
 npm run dev
 ```
 
+Open browser at `http://localhost:5173` (connect Freighter on Testnet).
+
 ---
 
-##  Contract Invocations
+## Contract Invocation Examples
 
-**Donate USDC** (500000000 = 50 USDC in stroops)
+**Donate USDC** (50000000 = 0.5 USDC)
 
 ```bash
 stellar contract invoke \
-  --id CCHK4RPWA66DAMY4BAZOTGRCF7Y3RHAODOXZVKFMZ7FNO2ZFEZUMR4CO \
+  --id CBSX6H3XDLZQELJA2V2LKSELAUDSKRPVL64ZKUDUCFJWDOTDUUASP5IC \
   --source my-key \
   --network testnet \
   -- donate \
   --donor <YOUR_ADDRESS> \
   --token CBIELTK6YBZJU5UP2WWQEUCYKLPU6AUNZ2BQ4WWFEIE3USCIHMXQDAMA \
-  --amount 500000000
+  --amount 50000000000
 ```
 
-**Declare emergency**
+**Declare Emergency** (instant if timelock = 0)
 
 ```bash
 stellar contract invoke \
-  --id CCHK4RPWA66DAMY4BAZOTGRCF7Y3RHAODOXZVKFMZ7FNO2ZFEZUMR4CO \
+  --id CBSX6H3XDLZQELJA2V2LKSELAUDSKRPVL64ZKUDUCFJWDOTDUUASP5IC \
   --source my-key \
   --network testnet \
   -- declare_emergency
 ```
 
-**Withdraw funds**
+**Set Timelock** (e.g., 1 hour = 3600 seconds)
 
 ```bash
 stellar contract invoke \
-  --id CCHK4RPWA66DAMY4BAZOTGRCF7Y3RHAODOXZVKFMZ7FNO2ZFEZUMR4CO \
+  --id CBSX6H3XDLZQELJA2V2LKSELAUDSKRPVL64ZKUDUCFJWDOTDUUASP5IC \
   --source my-key \
   --network testnet \
-  -- withdraw \
-  --coordinator <YOUR_ADDRESS> \
+  -- set_timelock \
+  --seconds 3600
+```
+
+**Pause Contract** (emergency stop)
+
+```bash
+stellar contract invoke \
+  --id CBSX6H3XDLZQELJA2V2LKSELAUDSKRPVL64ZKUDUCFJWDOTDUUASP5IC \
+  --source my-key \
+  --network testnet \
+  -- pause
+```
+
+**Batch Donate** (multiple entries in one call)
+
+```bash
+stellar contract invoke \
+  --id CBSX6H3XDLZQELJA2V2LKSELAUDSKRPVL64ZKUDUCFJWDOTDUUASP5IC \
+  --source my-key \
+  --network testnet \
+  -- batch_donate \
+  --batches '[{"token":"CBIEL...","amount":100000000,"asset":0},{"token":"CBIEL...","amount":200000000,"asset":0}]'
+```
+
+**Batch Withdraw** (multiple relief purposes)
+
+```bash
+stellar contract invoke \
+  --id CBSX6H3XDLZQELJA2V2LKSELAUDSKRPVL64ZKUDUCFJWDOTDUUASP5IC \
+  --source my-key \
+  --network testnet \
+  -- batch_withdraw \
   --token CBIELTK6YBZJU5UP2WWQEUCYKLPU6AUNZ2BQ4WWFEIE3USCIHMXQDAMA \
-  --amount 300000000 \
-  --purpose "Typhoon relief - Region IV-A"
-```
-
-**Lift emergency**
-
-```bash
-stellar contract invoke \
-  --id CCHK4RPWA66DAMY4BAZOTGRCF7Y3RHAODOXZVKFMZ7FNO2ZFEZUMR4CO \
-  --source my-key \
-  --network testnet \
-  -- lift_emergency
-```
-
-**Check balance**
-
-```bash
-stellar contract invoke \
-  --id CCHK4RPWA66DAMY4BAZOTGRCF7Y3RHAODOXZVKFMZ7FNO2ZFEZUMR4CO \
-  --source my-key \
-  --network testnet \
-  -- get_balance
+  --batches '[{"purpose":"Food packs","amount":150000000},{"purpose":"Water","amount":50000000}]'
 ```
 
 ---
 
-##  Tests
+## Tests
 
 | Test | What It Verifies |
 |---|---|
-| `test_initialize` | Zero balances and emergency flag off at deploy |
-| `test_single_donation` | Donor transfer completes and balance updates correctly |
-| `test_multiple_donors` | Fund accumulation works across independent donors |
-| `test_emergency_lifecycle` | Declare → verify active → lift → verify inactive |
-| `test_emergency_toggle` | Multiple sequential emergency toggles work correctly |
-| `test_withdraw_during_emergency` | Two sequential withdrawals produce correct cumulative state |
-| `test_over_withdraw` | Withdrawals exceeding balance are rejected with panic |
-| `test_zero_donation` | Non-zero donation validation works |
-| `test_donation_history_integrity` | Donation amounts and ordering tracked accurately |
+| `test_initialize` | Admin set, zero balances, not paused |
+| `test_donate` | Single donation transfers and records |
+| `test_batch_donate` | Atomic multiple donations (3 items) |
+| `test_multiple_donors` | Accumulation across donors |
+| `test_emergency_instant` | Immediate declare (timelock 0) |
+| `test_timelock_with_delay` | 1-hour timelock, activation after countdown |
+| `test_withdraw` | Single withdrawal reduces balance |
+| `test_batch_withdraw` | Multiple withdrawal purposes atomically |
+| `test_pause_unpause` | Admin can halt/resume operations |
+| `test_over_withdraw` | Overdraft protection (panic) |
+| `test_zero_donation` | Zero-amount rejection |
+| `test_history` | Full donation history accurate |
+| `test_advanced_complex_flow` | Integrated: deposit → set timelock → declare → activate → batch withdraw |
 
-All 9 tests pass:
-
-```
-test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.08s
-```
+All 21 unit tests pass on release build.
 
 ---
 
-##  Project Structure
+## Project Structure
 
 ```
 Tulong-Chain/
 ├── contracts/              # Soroban smart contract (Rust)
 │   ├── Cargo.toml
 │   ├── src/
-│   │   ├── lib.rs         # Main contract: donate, emergency, withdraw, views
-│   │   └── test.rs        # 9 comprehensive test cases
+│   │   ├── lib.rs         # Main contract (donate, pause, timelock, batch, views)
+│   │   └── test.rs        # 21 comprehensive test cases
 ├── frontend/               # React + Vite frontend
 │   ├── src/
-│   │   ├── App.tsx        # Main app with wallet connection
+│   │   ├── App.tsx
 │   │   ├── lib/
-│   │   │   ├── stellar.ts # Soroban contract interactions (with caching)
-│   │   │   ├── freighter.ts # Freighter wallet utilities
-│   │   │   └── config.ts  # Environment configuration
+│   │   │   ├── stellar.ts # Contract API (incl. advanced features)
+│   │   │   └── freighter.ts
 │   │   ├── views/
-│   │   │   ├── HomePage.tsx      # Landing page with CTA
-│   │   │   └── DashboardPage.tsx # Interactive relief dashboard
-│   │   └── components/
-│   │       ├── DonateForm.tsx    # USDC donation form
-│   │       ├── WithdrawForm.tsx  # Admin withdrawal interface
-│   │       ├── ActivityFeed.tsx  # Real-time on-chain events
-│   │       └── StatsCard.tsx     # Balance display cards
-└── README.md
+│   │   │   ├── HomePage.tsx
+│   │   │   └── DashboardPage.tsx   ← now shows paused, timelock, admin tools
+│   │   ├── components/
+│   │   │   ├── DonateForm.tsx
+│   │   │   ├── WithdrawForm.tsx
+│   │   │   ├── StatsCard.tsx
+│   │   │   ├── ActivityFeed.tsx
+│   │   │   └── TransactionHistory.tsx
+│   │   └── styles/global.css  ← added .paused-banner, .timelock-banner, .admin-controls
+│   ├── .env.example
+│   └── package.json
+├── convex/                 # Backend mirror (real-time feed)
+├── .github/
+│   └── workflows/
+│       ├── contracts.yml    # CI: cargo test + build WASM
+│       └── frontend.yml     # CI: npm ci, tsc, build
+├── README.md
+└── LICENSE
 ```
 
 ---
 
-##  Target Users
+## Advanced Implementation Details
 
-**Donors**
-- OFWs sending relief money home during typhoon season
-- Filipino diaspora in the US, Canada, UAE avoiding Western Union fees
-- Local NGO members wanting transparent donation tracking
+### Pausable Pattern
+- Admin can instantly stop all donations and withdrawals via `pause()` / `unpause()`.
+- In `donate`, `batch_donate`, `withdraw`, `batch_withdraw`: `assert!(!is_paused)`.
 
-**Coordinators / Admins**
-- Verified barangay relief coordinators managing fund release
-- LGU-affiliated organizations needing auditable disbursement records
+### Timelock Emergency
+- Global `timelock_seconds` storage (default 0 = instant). Admin can update with `set_timelock(seconds)` (min 3600).
+- `declare_emergency()` stores declaration with `activates_at = now + timelock`.
+- `is_emergency()` returns false until `now >= activates_at`.
+- `activate_emergency()` can be called once timelock expires to set flag true.
+- `lift_emergency()` cancels pending timelock.
 
----
+### Batch Operations
+- `batch_donate(Vec<(token, amount, asset)>)` atomic group donation.
+- `batch_withdraw(Vec<(purpose, amount)>)` atomic multi-purpose withdrawal.
+- Both respect all guard checks (paused, emergency, balance) and publish aggregate events.
 
-##  MVP Timeline
-
-| Day | Task |
-|---|---|
-| Day 1 | Set up Rust + Soroban CLI, write and test contract locally |
-| Day 2 | Deploy contract to Stellar Testnet, scaffold React/Vite frontend |
-| Day 3 | Integrate Freighter wallet + contract invocations in frontend |
-| Day 4 | Add Convex real-time feed, polish UI, record demo |
-| Day 5 | Submit on Rise In with GitHub + Contract ID |
-
----
-
-##  Submission
-
-| Field | Value |
-|---|---|
-| **GitHub Repository** | [github.com/Debb1ie/Tulong-Chain](https://github.com/Debb1ie/Tulong-Chain) |
-| **Contract ID** | `CCHK4RPWA66DAMY4BAZOTGRCF7Y3RHAODOXZVKFMZ7FNO2ZFEZUMR4CO` |
-| **Stellar Expert** | [View Contract →](https://stellar.expert/explorer/testnet/contract/CCHK4RPWA66DAMY4BAZOTGRCF7Y3RHAODOXZVKFMZ7FNO2ZFEZUMR4CO) |
-| **Frontend** | [tulong-chain.vercel.app](https://tulong-chain.vercel.app/) |
-| **Convex Dashboard** | [View Real-Time Feed →](https://dashboard.convex.dev/t/deborahgrace0118/frontend-9d9b7/exciting-hawk-153) |
-| **Program** | [Rise In — Stellar Philippines UniTour](https://www.risein.com/programs/stellar-philippines-unitour-university-of-east-caloocan) |
-| **Documentation** | [Link:https://docs.google.com/document/d/1rOwTdzjz1XM0H7peBI4O4wGiXGneYo5BKjE9clq3rdc/edit?tab=t.0) |
-
-**Short Description:**
-> TulongChain is a community disaster relief fund on Stellar. Donors send USDC into a Soroban smart contract escrow that only releases funds when a verified admin declares a disaster emergency — making every centavo traceable and tamper-proof.
-
-### Submission Checklist
-
-- [x] `cargo test` passes (9 tests)
-- [x] Contract deployed to Stellar Testnet
-- [x] GitHub repository is public
-- [x] Frontend runs on Vercel without errors
-- [x] Convex real-time feed connected
-- [x] Rise In submission form completed
+### Inter-Contract Calls
+- Uses `token::Client` to call `transfer` on any SEP-41 token contract.
+- No hardcoded asset types; accepts any token address.
 
 ---
 
-##  Resources
+## Configuration
 
-| Resource | Link |
-|---|---|
-| Stellar Docs | https://developers.stellar.org |
-| Soroban SDK | https://docs.rs/soroban-sdk |
-| Stellar CLI Docs | https://developers.stellar.org/docs/tools/stellar-cli |
-| Freighter Wallet | https://freighter.app |
-| Stellar Expert (Testnet) | https://stellar.expert/explorer/testnet |
-| Deploy Guide | https://github.com/armlynobinguar/Stellar-Bootcamp-2026 |
-| Community Treasury Example | https://github.com/armlynobinguar/community-treasury |
+**Frontend env (`.env`):**
+
+```
+VITE_CONTRACT_ID=CBSX6H3XDLZQELJA2V2LKSELAUDSKRPVL64ZKUDUCFJWDOTDUUASP5IC
+VITE_USDC_CONTRACT_ID=CBIELTK6YBZJU5UP2WWQEUCYKLPU6AUNZ2BQ4WWFEIE3USCIHMXQDAMA
+VITE_NETWORK=testnet
+VITE_NETWORK_PASSPHRASE=Test SDF Network ; September 2015
+VITE_STELLAR_RPC_URL=https://soroban-testnet.stellar.org
+VITE_HORIZON_URL=https://horizon-testnet.stellar.org
+VITE_CONVEX_URL=<your-convex-deployment>
+```
+
+---
+
+## Screenshots
+
+**Mobile Responsive View**  
+![Mobile view](docs/images/mobile-screenshot.png)  
+*(Responsive dashboard on iPhone 12 — donate form, stats, activity feed scale gracefully)*
+
+**CI/CD Pipeline**  
+![CI Badge](https://github.com/Debb1ie/Tulong-Chain/actions/workflows/contracts.yml/badge.svg)  
+([Contract CI](https://github.com/Debb1ie/Tulong-Chain/actions/workflows/contracts.yml))  
+([Frontend CI](https://github.com/Debb1ie/Tulong-Chain/actions/workflows/frontend.yml))
+
+---
+
+## Future Enhancements
+
+- Full UI for batch donations/withdrawals
+- Custom **TULONG** native token deployment
+- Multi-sig admin for emergency declaration
+- Time-locked treasury upgrades (proxy pattern)
+- Token whitelist for allowed assets
 
 ---
 
@@ -359,4 +397,4 @@ MIT License — see [LICENSE](LICENSE) for details.
 
 ---
 
-*Built for Filipino families 🇵🇭 · Stellar Philippines UniTour Bootcamp 2026*
+*Built for Filipino families 🇵🇭 · Stellar Philippines UniTour Bootcamp 2026 · Advanced Soroban patterns*
