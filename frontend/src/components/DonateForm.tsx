@@ -50,7 +50,14 @@ export default function DonateForm({ onDonate, loading }: Props) {
       </div>
 
       <button className="btn-primary" onClick={handleSubmit} disabled={loading}>
-        {loading ? "Processing..." : "Donate via Freighter"}
+        {loading ? (
+          <>
+            <span className="spinner"></span>
+            Processing...
+          </>
+        ) : (
+          "Donate via Freighter"
+        )}
       </button>
     </div>
   );

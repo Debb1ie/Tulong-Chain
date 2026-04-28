@@ -17,6 +17,57 @@ import { signTx } from "./freighter";
 
 const server = new SorobanRpc.Server(CONFIG.rpcUrl);
 
+// Cache for read-only queries (5 second TTL)
+const cache = new Map<string, { value: unknown; expiry: number }>();
+const CACHE_TTL = 5000; // 5 seconds
+
+function getCacheKey(method: string, args: xdr.ScVal[]): string {
+  return `${method}:${args.map(a => a.toXDR()).join(",")}`;
+}
+
+/** Read-only call (no signing needed) with caching */
+async function readContract(method: string, args: xdr.ScVal[] = [], useCache = true): Promise<unknown> {
+  const cacheKey = getCacheKey(method, args);
+  
+  if (useCache) {
+    const cached = cache.get(cacheKey);
+    if (cached && Date.now() < cached.expiry) {
+      return cached.value;
+    }
+  }
+
+  const contract = new Contract(CONFIG.contractId);
+  // Use a dummy source for simulation reads
+  const dummyAccount = await server.getAccount(
+    "GAAZI4TCR3TY5OJHCTJC2A4QSY6CJWJH5IAJTGKIN2ER7LBNVKOCCWN"
+  ).catch(() => null);
+
+  if (!dummyAccount) return null;
+
+  const tx = new TransactionBuilder(dummyAccount, {
+    fee: BASE_FEE,
+    networkPassphrase: CONFIG.networkPassphrase,
+  })
+    .addOperation(contract.call(method, ...args))
+    .setTimeout(30)
+    .build();
+
+  const simResult = await server.simulateTransaction(tx);
+  if (SorobanRpc.Api.isSimulationError(simResult)) {
+    throw new Error(`Read failed: ${simResult.error}`);
+  }
+
+  const result = simResult.result?.retval ? scValToNative(simResult.result.retval) : null;
+  
+  // Cache the result
+  cache.set(cacheKey, {
+    value: result,
+    expiry: Date.now() + CACHE_TTL
+  });
+
+  return result;
+}
+
 /** Build, simulate, sign, and submit a contract call */
 async function invokeContract(
   callerAddress: string,
@@ -51,6 +102,9 @@ async function invokeContract(
     throw new Error(`Submit failed: ${JSON.stringify(submitResult.errorResult)}`);
   }
 
+  // Clear cache on successful transaction since state changed
+  cache.clear();
+
   // Poll for completion
   let getResult = await server.getTransaction(submitResult.hash);
   while (getResult.status === SorobanRpc.Api.GetTransactionStatus.NOT_FOUND) {
@@ -63,32 +117,6 @@ async function invokeContract(
   }
 
   throw new Error("Transaction failed");
-}
-
-/** Read-only call (no signing needed) */
-async function readContract(method: string, args: xdr.ScVal[] = []): Promise<unknown> {
-  const contract = new Contract(CONFIG.contractId);
-  // Use a dummy source for simulation reads
-  const dummyAccount = await server.getAccount(
-    "GAAZI4TCR3TY5OJHCTJC2A4QSY6CJWJH5IAJTGKIN2ER7LBNVKOCCWN"
-  ).catch(() => null);
-
-  if (!dummyAccount) return null;
-
-  const tx = new TransactionBuilder(dummyAccount, {
-    fee: BASE_FEE,
-    networkPassphrase: CONFIG.networkPassphrase,
-  })
-    .addOperation(contract.call(method, ...args))
-    .setTimeout(30)
-    .build();
-
-  const simResult = await server.simulateTransaction(tx);
-  if (SorobanRpc.Api.isSimulationError(simResult)) {
-    throw new Error(`Read failed: ${simResult.error}`);
-  }
-
-  return simResult.result?.retval ? scValToNative(simResult.result.retval) : null;
 }
 
 // ─── Public API ──────────────────────────────────────────────────────────────
@@ -125,22 +153,22 @@ export async function withdraw(
   ]);
 }
 
-export async function getTotalDonated(): Promise<number> {
-  const val = await readContract("get_total_donated");
+export async function getTotalDonated(useCache = true): Promise<number> {
+  const val = await readContract("get_total_donated", [], useCache);
   return val ? Number(val) / 1e7 : 0;
 }
 
-export async function getTotalWithdrawn(): Promise<number> {
-  const val = await readContract("get_total_withdrawn");
+export async function getTotalWithdrawn(useCache = true): Promise<number> {
+  const val = await readContract("get_total_withdrawn", [], useCache);
   return val ? Number(val) / 1e7 : 0;
 }
 
-export async function getBalance(): Promise<number> {
-  const val = await readContract("get_balance");
+export async function getBalance(useCache = true): Promise<number> {
+  const val = await readContract("get_balance", [], useCache);
   return val ? Number(val) / 1e7 : 0;
 }
 
-export async function isEmergency(): Promise<boolean> {
-  const val = await readContract("is_emergency");
+export async function isEmergency(useCache = true): Promise<boolean> {
+  const val = await readContract("is_emergency", [], useCache);
   return Boolean(val);
 }

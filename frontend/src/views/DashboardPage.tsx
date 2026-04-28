@@ -56,10 +56,10 @@ export default function DashboardPage({ wallet, onBack }: Props) {
     if (!silent) setRefreshing(true);
     try {
       const [donated, withdrawn, balance, emergency] = await Promise.all([
-        getTotalDonated(),
-        getTotalWithdrawn(),
-        getBalance(),
-        isEmergency(),
+        getTotalDonated(!silent),
+        getTotalWithdrawn(!silent),
+        getBalance(!silent),
+        isEmergency(!silent),
       ]);
       setStats({ totalDonated: donated, totalWithdrawn: withdrawn, balance, isEmergency: emergency });
       setLastRefresh(new Date());
