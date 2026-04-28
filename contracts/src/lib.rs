@@ -6,7 +6,6 @@ use soroban_sdk::{
 #[cfg(test)]
 mod test;
 
-
 // ─── Storage Keys ────────────────────────────────────────────────────────────
 
 #[contracttype]
@@ -54,7 +53,7 @@ pub struct TulongChain;
 
 #[contractimpl]
 impl TulongChain {
-    /// Initialize the contract with an admin (relief coordinator) address.
+    /// Initialize the contract with an admin address.
     pub fn initialize(env: Env, admin: Address) {
         admin.require_auth();
         env.storage().instance().set(&DataKey::Admin, &admin);
@@ -63,16 +62,14 @@ impl TulongChain {
         env.storage().instance().set(&DataKey::Emergency, &false);
     }
 
-    /// Donate USDC to the community relief fund.
+    /// Donate USDC to the fund.
     pub fn donate(env: Env, donor: Address, token: Address, amount: i128) {
         donor.require_auth();
-        assert!(amount > 0, "Amount must be greater than zero");
+        assert!(amount > 0, "Amount must be > 0");
 
-        // Transfer tokens from donor into this contract
         let token_client = token::Client::new(&env, &token);
         token_client.transfer(&donor, &env.current_contract_address(), &amount);
 
-        // Record donation in history
         let mut donations: Vec<Donation> = env
             .storage()
             .instance()
@@ -83,11 +80,11 @@ impl TulongChain {
             donor: donor.clone(),
             amount,
             timestamp: env.ledger().timestamp(),
+            asset: AssetType::Usdc,
         });
 
         env.storage().instance().set(&DataKey::Donations, &donations);
 
-        // Update running total
         let total: i128 = env
             .storage()
             .instance()
@@ -110,7 +107,6 @@ impl TulongChain {
             .unwrap();
         admin.require_auth();
         env.storage().instance().set(&DataKey::Emergency, &true);
-
         env.events()
             .publish((Symbol::new(&env, "emergency_declared"),), ());
     }
@@ -124,12 +120,11 @@ impl TulongChain {
             .unwrap();
         admin.require_auth();
         env.storage().instance().set(&DataKey::Emergency, &false);
-
         env.events()
             .publish((Symbol::new(&env, "emergency_lifted"),), ());
     }
 
-    /// Coordinator withdraws funds during a declared emergency.
+    /// Coordinator withdraws funds during an emergency.
     pub fn withdraw(
         env: Env,
         coordinator: Address,
@@ -153,17 +148,14 @@ impl TulongChain {
             .unwrap();
         assert!(coordinator == admin, "Only admin/coordinator can withdraw");
 
-        assert!(amount > 0, "Amount must be greater than zero");
+        assert!(amount > 0, "Amount must be > 0");
 
-        // Check available balance
         let balance = Self::get_balance(env.clone());
         assert!(amount <= balance, "Insufficient contract balance");
 
-        // Transfer tokens out to coordinator
         let token_client = token::Client::new(&env, &token);
         token_client.transfer(&env.current_contract_address(), &coordinator, &amount);
 
-        // Record withdrawal
         let mut withdrawals: Vec<Withdrawal> = env
             .storage()
             .instance()
@@ -181,7 +173,6 @@ impl TulongChain {
             .instance()
             .set(&DataKey::Withdrawals, &withdrawals);
 
-        // Update total withdrawn
         let total_withdrawn: i128 = env
             .storage()
             .instance()
