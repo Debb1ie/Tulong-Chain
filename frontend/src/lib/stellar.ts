@@ -138,9 +138,11 @@ export async function donateXlm(
   callerAddress: string,
   amountXlm: number
 ): Promise<string> {
+  // XLM has 7 decimal places (1 XLM = 10,000,000 "stroops")
+  const baseAmount = BigInt(Math.round(amountXlm * 10 ** 7));
   const { txHash } = await invokeContract(callerAddress, "donate_xlm", [
     new Address(callerAddress).toScVal(),
-    nativeToScVal(amountXlm, { type: "i128" }),
+    nativeToScVal(baseAmount, { type: "i128" }),
   ]);
   return txHash;
 }
