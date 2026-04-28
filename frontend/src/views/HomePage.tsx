@@ -223,6 +223,11 @@ export default function HomePage({
     }
   }
 
+  const handleOpenFreighterNetwork = () => {
+    // Open Freighter's network settings page
+    window.open("https://stellar.expert/explorer/testnet", "_blank");
+  };
+
   return (
     <div className="home">
 
@@ -303,7 +308,14 @@ export default function HomePage({
       {networkError && (
         <div className="emergency-banner" style={{ background: "var(--red)", borderBottom: "3px solid var(--black)" }}>
           <span className="emergency-icon">!</span>
-          <strong>WRONG NETWORK</strong> - {networkError}
+          <strong>WRONG NETWORK</strong> - {networkError}{" "}
+          <button
+            className="btn-ghost-light"
+            style={{ background: "var(--yellow)", color: "var(--black)", border: "1.5px solid var(--black)" }}
+            onClick={handleOpenFreighterNetwork}
+          >
+            Open Testnet Explorer
+          </button>
         </div>
       )}
 
@@ -451,7 +463,7 @@ export default function HomePage({
                   rel="noreferrer"
                   className="explorer-link"
                 >
-                  View on Stellar Expert -&gt;
+                  View on Explorer -&gt;
                 </a>
               </div>
             </div>
