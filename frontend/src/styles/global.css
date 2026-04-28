@@ -3167,8 +3167,79 @@ body::before {
   display: flex;
   align-items: center;
   justify-content: center;
+  font-family: var(--mono);
   font-size: 0.65rem;
   font-weight: 700;
+  flex-shrink: 0;
+}
+
+/* ── DONATE AMOUNT BUTTONS ─────────────────────────────────── */
+
+.donate-amounts {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin: 0.25rem 0;
+}
+
+.donate-amount-btn {
+  flex: 1;
+  min-width: 70px;
+  padding: 0.6rem 0.5rem;
+  background: var(--white);
+  border: 2px solid var(--black);
+  border-radius: var(--r-sm);
+  font-family: var(--display);
+  font-size: 0.9rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all var(--t-fast);
+  box-shadow: 0 3px 0 var(--black-2);
+}
+
+.donate-amount-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 0 var(--black-2);
+}
+
+.donate-amount-btn:active:not(:disabled) {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 var(--black-2);
+}
+
+.donate-amount-btn.active {
+  background: var(--black);
+  color: var(--white);
+}
+
+.donate-amount-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.donate-submit {
+  width: 100%;
+  margin-top: 0.5rem;
+  padding: 1rem;
+  font-size: 1rem;
+}
+
+.donate-status {
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-align: center;
+  margin-top: 0.5rem;
+  padding: 0.75rem;
+  border-radius: var(--r-sm);
+  background: var(--off-white);
+}
+
+.donate-status:has-text("✅") {
+  color: var(--green-2);
+}
+
+.donate-status:has-text("❌") {
+  color: var(--red);
 }
 
 /* ── TRANSACTION HISTORY ─────────────────────────────────────────── */
