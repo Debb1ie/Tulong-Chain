@@ -224,8 +224,15 @@ export default function HomePage({
   }
 
   const handleOpenFreighterNetwork = () => {
-    // Open Freighter's network settings page
     window.open("https://stellar.expert/explorer/testnet", "_blank");
+  };
+
+  const handleQuickDonate = () => {
+    const btns = document.querySelectorAll(".btn-primary");
+    const lastBtn = btns[btns.length - 1] as HTMLElement;
+    if (lastBtn) {
+      lastBtn.click();
+    }
   };
 
   return (
@@ -311,10 +318,10 @@ export default function HomePage({
           <strong>WRONG NETWORK</strong> - {networkError}{" "}
           <button
             className="btn-ghost-light"
-            style={{ background: "var(--yellow)", color: "var(--black)", border: "1.5px solid var(--black)" }}
+            style={{ background: "var(--yellow)", color: "var(--black)", border: "1.5px solid var(--black)", marginLeft: "1rem" }}
             onClick={handleOpenFreighterNetwork}
           >
-            Open Testnet Explorer
+            Open Testnet Explorer →
           </button>
         </div>
       )}
@@ -382,7 +389,7 @@ export default function HomePage({
                     {wallet.address?.slice(0, 6)}...{wallet.address?.slice(-4)}
                   </span>
                   <button className="btn-primary" onClick={onEnter}>
-                    Open Dashboard -&gt;
+                    Dashboard -&gt;
                   </button>
                 </div>
               )}
@@ -450,11 +457,45 @@ export default function HomePage({
                 ))}
               </div>
 
-              <div className="feat-tags">
-                {["Soroban", "USDC", "Freighter", "Trustlines", "Events", "SEP-41"].map((t) => (
-                  <span key={t} className="feat-tag">{t}</span>
-                ))}
-              </div>
+              {wallet.connected && (
+                <div style={{ padding: "1rem", borderTop: "2px solid rgba(13,13,13,0.08)", marginTop: "1rem" }}>
+                  <p style={{ fontSize: "0.7rem", fontWeight: 700, color: "var(--muted)", marginBottom: "0.5rem", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+                    Quick Donate
+                  </p>
+                  <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
+                    {[25, 50, 100, 250].map((amt) => (
+                      <button
+                        key={amt}
+                        className="btn-primary"
+                        style={{ padding: "0.5rem 0.75rem", fontSize: "0.8rem", flex: 1, minWidth: "70px" }}
+                        onClick={handleQuickDonate}
+                      >
+                        ${amt}
+                      </button>
+                    ))}
+                  </div>
+                  <p style={{ fontSize: "0.65rem", color: "var(--muted)", marginTop: "0.5rem", textAlign: "center" }}>
+                    Opens dashboard to complete donation via Freighter
+                  </p>
+                </div>
+              )}
+
+              {!wallet.connected && (
+                <div style={{ padding: "1rem", borderTop: "2px solid rgba(13,13,13,0.08)", marginTop: "1rem", textAlign: "center" }}>
+                  <p style={{ fontSize: "0.75rem", color: "var(--muted)", marginBottom: "0.75rem" }}>
+                    Connect Freighter wallet to start donating
+                  </p>
+                  <button className="btn-primary" style={{ width: "100%" }} onClick={onConnect}>
+                    Connect Wallet
+                  </button>
+                  <p style={{ fontSize: "0.75rem", color: "var(--muted)", marginBottom: "0.75rem", marginTop: "0.5rem" }}>
+                    Need Testnet XLM? 
+                    <a href="https://friendbot.stellar.org" target="_blank" rel="noreferrer" style={{ color: "var(--yellow)", fontWeight: 700 }}>
+                      Get it here
+                    </a>
+                  </p>
+                </div>
+              )}
 
               <div className="fund-card-footer">
                 <a
@@ -466,13 +507,13 @@ export default function HomePage({
                   View on Explorer -&gt;
                 </a>
               </div>
-            </div>
 
-            <div className="float-badge float-badge-1">
-              <span>L</span> Escrow locked
-            </div>
-            <div className="float-badge float-badge-2">
-              <span>B</span> 3s finality
+              <div className="float-badge float-badge-1">
+                <span>L</span> Escrow locked
+              </div>
+              <div className="float-badge float-badge-2">
+                <span>B</span> 3s finality
+              </div>
             </div>
           </div>
         </div>
@@ -507,10 +548,10 @@ export default function HomePage({
       <section className="how-section">
         <div className="section-inner">
           <div className="section-header how-header">
-            <span className="section-eyebrow eyebrow-sun">Demo flow</span>
-            <h2 className="section-h2 section-h2-light">How it works</h2>
+            <span className="section-eyebrow eyebrow-sun">Getting Started</span>
+            <h2 className="section-h2 section-h2-light">How to donate in 3 steps</h2>
             <p className="section-sub section-sub-light">
-              End-to-end in under 2 minutes. Hackathon-ready demo with real on-chain transactions.
+              End-to-end in under 2 minutes with real on-chain transactions.
             </p>
           </div>
 
