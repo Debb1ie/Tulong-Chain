@@ -2,7 +2,7 @@
 import { useState, useEffect, useRef } from "react";
 import type { WalletState } from "../types";
 import { getWalletNetwork } from "../lib/freighter";
-import { Server, Networks } from "@stellar/stellar-sdk";
+import * as StellarSDK from "@stellar/stellar-sdk";
 import { WrongNetworkError } from "../lib/freighter";
 
 interface Props {
@@ -200,7 +200,7 @@ export default function HomePage({
       if (wallet.connected && wallet.address) {
         try {
           const network = await getWalletNetwork();
-          if (network !== Networks.TESTNET) {
+          if (network !== StellarSDK.Networks.TESTNET) {
             setNetworkError("Please switch Freighter to Stellar Testnet");
           } else {
             setNetworkError(null);
@@ -297,6 +297,13 @@ export default function HomePage({
               {item}
             </a>
           ))}
+        </div>
+      )}
+
+      {networkError && (
+        <div className="emergency-banner" style={{ background: "var(--red)", borderBottom: "3px solid var(--black)" }}>
+          <span className="emergency-icon">!</span>
+          <strong>WRONG NETWORK</strong> - {networkError}
         </div>
       )}
 
@@ -461,7 +468,7 @@ export default function HomePage({
 
       <div className="rainbow-strip" />
 
-      <section className="impact-section" id="impact">
+      <section className="impact-section">
         <div className="section-inner">
           <div className="section-header">
             <span className="section-eyebrow eyebrow-sun">Impact at a glance</span>
@@ -485,7 +492,7 @@ export default function HomePage({
 
       <div className="rainbow-strip" />
 
-      <section className="how-section" id="how">
+      <section className="how-section">
         <div className="section-inner">
           <div className="section-header how-header">
             <span className="section-eyebrow eyebrow-sun">Demo flow</span>
@@ -564,7 +571,7 @@ export default function HomePage({
 
       <div className="rainbow-strip" />
 
-      <section className="features-section" id="features">
+      <section className="features-section">
         <div className="section-inner">
           <div className="section-header">
             <span className="section-eyebrow eyebrow-violet">Stellar integration</span>
@@ -659,30 +666,29 @@ export default function HomePage({
           <div className="footer-links-block">
             <div className="footer-col">
               <div className="footer-col-title">Resources</div>
-              {[
-                { label: "Stellar Docs", href: "https://developers.stellar.org" },
-                { label: "Soroban SDK", href: "https://docs.rs/soroban-sdk" },
-                { label: "Freighter", href: "https://freighter.app" },
-              ].map(({ label, href }) => (
-                <a key={label} href={href} target="_blank" rel="noreferrer" className="footer-link">
+              {["Stellar Docs", "Soroban SDK", "Freighter"].map((label) => (
+                <a key={label} href={
+                  label === "Stellar Docs" ? "https://developers.stellar.org" :
+                  label === "Soroban SDK" ? "https://docs.rs/soroban-sdk" :
+                  "https://freighter.app"
+                } target="_blank" rel="noreferrer" className="footer-link">
                   {label}
                 </a>
               ))}
             </div>
             <div className="footer-col">
               <div className="footer-col-title">Explore</div>
-              {[
-                { label: "Stellar Expert", href: "https://stellar.expert/explorer/testnet" },
-                { label: "Rise In Program", href: "https://www.risein.com/programs/stellar-philippines-unitour-university-of-east-caloocan" },
-              ].map(({ label, href }) => (
-                <a key={label} href={href} target="_blank" rel="noreferrer" className="footer-link">
+              {["Stellar Expert", "Rise In Program"].map((label) => (
+                <a key={label} href={
+                  label === "Stellar Expert" ? "https://stellar.expert/explorer/testnet" :
+                  "https://www.risein.com/programs/stellar-philippines-unitour-university-of-east-caloocan"
+                } target="_blank" rel="noreferrer" className="footer-link">
                   {label}
                 </a>
               ))}
             </div>
           </div>
         </div>
-
         <div className="footer-bottom">
           <span className="footer-copy">
             2026 TulongChain - Stellar Philippines
