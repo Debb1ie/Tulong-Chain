@@ -1,0 +1,48 @@
+name: Contract CI
+
+on:
+  push:
+    branches: [ main, master ]
+    paths:
+      - 'contracts/**'
+      - '.github/workflows/contracts.yml'
+  pull_request:
+    branches: [ main, master ]
+    paths:
+      - 'contracts/**'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: wasm32-unknown-unknown
+      - name: Add WASM target
+        run: rustup target add wasm32-unknown-unknown
+      - name: Cache cargo registry
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target/
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+      - name: Run tests
+        working-directory: ./contracts
+        run: cargo test --release
+      - name: Build WASM
+        working-directory: ./contracts
+        run: cargo build --target wasm32-unknown-unknown --release
+
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+      - name: Run clippy
+        working-directory: ./contracts
+        run: cargo clippy -- -D warnings
