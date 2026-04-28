@@ -13,7 +13,7 @@ interface Props {
 }
 
 export default function DonateForm({ wallet, isAdmin = false, onConnect }: Props) {
-  const [asset, setAsset] = useState<AssetType>("XLM");
+  const [asset, setAsset] = useState<AssetType>("USDC"); // Default to USDC (live contract supports it)
   const [donationAmount, setDonationAmount] = useState(0.1);
   const [donating, setDonating] = useState(false);
   const [statusMsg, setStatusMsg] = useState("");
@@ -115,7 +115,13 @@ export default function DonateForm({ wallet, isAdmin = false, onConnect }: Props
 
       {asset === "USDC" && (
         <p style={{ fontSize: "0.8rem", color: "var(--muted)", marginTop: "0.5rem" }}>
-          ⚠️ First-time USDC donors: Add a USDC trustline in Freighter first.
+          ⚠️ First-time USDC donors: Add a USDC trustline in Freighter (Settings → Assets).
+        </p>
+      )}
+
+      {asset === "XLM" && (
+        <p style={{ fontSize: "0.8rem", color: "var(--red)", marginTop: "0.5rem", fontWeight: 700 }}>
+          ⚠️ XLM donations require contract redeploy. Run: <code style={{background: "var(--off-white)", padding: "2px 6px", borderRadius: "4px"}}>node scripts/deploy-contract.js</code>
         </p>
       )}
 

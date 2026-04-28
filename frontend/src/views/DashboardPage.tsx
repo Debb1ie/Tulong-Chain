@@ -13,6 +13,7 @@ import {
   isPaused,
   getTimelockDuration,
   getTimelockInfo,
+  getDonationsFromHorizon,
   pause,
   unpause,
   setTimelock,
@@ -52,13 +53,15 @@ export default function DashboardPage({ wallet, onBack, onConnect }: Props) {
   const [refreshing, setRefreshing] = useState(false);
   const [lastRefresh, setLastRefresh] = useState<Date>(new Date());
   const [contractXlmBalance, setContractXlmBalance] = useState<string>("0");
+  const [myDonationCount, setMyDonationCount] = useState<number>(0);
+  const [myLastDonation, setMyLastDonation] = useState<{ amount: number; asset: string } | null>(null);
   const [activity, setActivity] = useState<ActivityItem[]>([]);
   const [showFeedbackModal, setShowFeedbackModal] = useState(false);
 
   const refreshStats = useCallback(async (silent = false) => {
     if (!silent) setRefreshing(true);
     try {
-      const [donated, withdrawn, balance, emergency, pausedState, tlDuration, tlInfo] = await Promise.all([
+      const [donated, withdrawn, balance, emergency, pausedState, tlDuration, tlInfo, history] = await Promise.all([
         getTotalDonated(!silent),
         getTotalWithdrawn(!silent),
         getBalance(!silent),
@@ -66,24 +69,64 @@ export default function DashboardPage({ wallet, onBack, onConnect }: Props) {
         isPaused(!silent),
         getTimelockDuration(!silent),
         getTimelockInfo(!silent),
+        // Only fetch history if wallet connected
+        wallet.connected && wallet.address ? getDonationHistory(!silent) : Promise.resolve([]),
       ]);
       setStats({ totalDonated: donated, totalWithdrawn: withdrawn, balance, isEmergency: emergency });
       setPaused(pausedState);
       setTimelockDuration(tlDuration);
       setTimelockInfo(tlInfo);
+
+      // Filter to this wallet's donations
+      if (wallet.connected && wallet.address && Array.isArray(history)) {
+        const myDons = history.filter((h: any) => h.donor === wallet.address);
+        setMyDonationCount(myDons.length);
+        if (myDons.length > 0) {
+          const last = myDons[myDons.length - 1];
+          setMyLastDonation({
+            amount: Number(last.amount) / 1e7,
+            asset: last.asset === "USDC" ? "USDC" : "XLM",
+          });
+        }
+      }
+
       setLastRefresh(new Date());
     } catch (err) {
       console.error("Failed to load stats:", err);
     } finally {
       setRefreshing(false);
     }
-  }, []);
+  }, [wallet.connected, wallet.address, refreshing]);
 
   useEffect(() => {
     refreshStats(true);
     const interval = setInterval(() => refreshStats(true), 30_000);
     return () => clearInterval(interval);
-  }, [refreshStats]);
+   }, [refreshStats]);
+
+  // Fetch this wallet's donation history from Horizon
+  useEffect(() => {
+    if (!wallet.connected || !wallet.address) return;
+
+    async function fetchMyDonations() {
+      try {
+        const payments = await getDonationsFromHorizon(wallet.address);
+        setMyDonationCount(payments.length);
+        if (payments.length > 0) {
+          const latest = payments[0]; // desc order
+          const amount = parseFloat(latest.amount);
+          const asset = latest.asset_type === "native" ? "XLM" : latest.asset_code || "USDC";
+          setMyLastDonation({ amount, asset });
+        }
+      } catch (err) {
+        console.error("Failed to fetch my donations:", err);
+      }
+    }
+
+    fetchMyDonations();
+    const interval = setInterval(fetchMyDonations, 10000); // every 10s
+    return () => clearInterval(interval);
+  }, [wallet.connected, wallet.address]);
 
   // Show feedback modal on first visit (once per wallet)
   useEffect(() => {
@@ -173,6 +216,11 @@ export default function DashboardPage({ wallet, onBack, onConnect }: Props) {
             <span className="address-badge-btn">
               {wallet.address?.slice(0, 8)}...{wallet.address?.slice(-6)}
             </span>
+            {myDonationCount > 0 && (
+              <div className="wallet-stats" style={{ marginTop: "0.25rem", fontSize: "0.75rem", color: "var(--muted)" }}>
+                {myDonationCount} donation{myDonationCount !== 1 ? "s" : ""} • {myLastDonation?.amount} {myLastDonation?.asset}
+              </div>
+            )}
           </div>
 
           <button

@@ -205,6 +205,32 @@ export async function getTimelockInfo(useCache = true): Promise<{declared_at: nu
   return val || {declared_at: 0, activates_at: 0};
 }
 
+/** Get donation history from Horizon (payments to contract) */
+export async function getDonationsFromHorizon(donorAddress?: string): Promise<Array<{
+  amount: string;
+  asset_code: string;
+  asset_type: string;
+  transaction_hash: string;
+  created_at: string;
+  from: string;
+}>> {
+  const url = donorAddress
+    ? `https://horizon-testnet.stellar.org/accounts/${CONFIG.contractId}/payments?order=desc&limit=50`
+    : `https://horizon-testnet.stellar.org/accounts/${CONFIG.contractId}/payments?order=desc&limit=50`;
+
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`Horizon error ${res.status}`);
+  const data = await res.json();
+
+  let payments = (data._embedded?.records || []).filter((p: any) => p.type === "payment" && p.to === CONFIG.contractId);
+
+  if (donorAddress) {
+    payments = payments.filter((p: any) => p.from.toLowerCase() === donorAddress.toLowerCase());
+  }
+
+  return payments;
+}
+
 export async function pause(callerAddress: string): Promise<string> {
   const { txHash } = await invokeContract(callerAddress, "pause", []);
   return txHash;
