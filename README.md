@@ -8,7 +8,7 @@ Built on **Stellar + Soroban** · Stellar Philippines UniTour Bootcamp 2026
 [![Soroban](https://img.shields.io/badge/Smart%20Contract-Soroban-534AB7?style=flat-square)](https://soroban.stellar.org)
 [![Rust](https://img.shields.io/badge/Language-Rust-D85A30?style=flat-square&logo=rust&logoColor=white)](https://www.rust-lang.org)
 [![USDC](https://img.shields.io/badge/Token-USDC-2775CA?style=flat-square)](https://www.circle.com/usdc)
-[![Tests](https://img.shields.io/badge/Tests-5%20passing-639922?style=flat-square)](#tests)
+[![Tests](https://img.shields.io/badge/Tests-9%20passing-639922?style=flat-square)](#tests)
 [![License: MIT](https://img.shields.io/badge/License-MIT-888780?style=flat-square)](LICENSE)
 
 ---
@@ -32,7 +32,7 @@ CCHK4RPWA66DAMY4BAZOTGRCF7Y3RHAODOXZVKFMZ7FNO2ZFEZUMR4CO
 
 ##  The Problem
 
-Natural disasters hit the Philippines every typhoon season — yet relief fundraising still runs through GCash group chats, manual bank transfers, and screenshots shared on Facebook.
+Natural disasters hit the Philippines every typhoon season — yet relief fundraising still runs through GCash group chats, manual bank transfers, and screenshots shared on Facebook. 
 
 | Pain Point | Reality |
 |---|---|
@@ -90,10 +90,10 @@ Stellar Expert · Convex Real-Time Feed
 
 | Feature | How It's Used |
 |---|---|
-| **Soroban Smart Contracts** | Core escrow logic — `donate()`, `declare_emergency()`, `withdraw()`, and `lift_emergency()` all enforced on-chain with no trusted third party |
-| **USDC on Stellar** | Stablecoin donations eliminate XLM price volatility — donors and coordinators always know the real-peso equivalent |
-| **Trustlines** | Recipients must opt-in to USDC before receiving funds, ensuring SEP-41 compliance |
-| **Soroban Events** | `donated`, `emergency_declared`, `emergency_lifted`, `withdrawn` emitted on every state change for public auditability |
+| **Soroban Smart Contracts** | Core escrow logic — `donate()`, `emergency gate`, `withdraw()` — enforced on-chain with no trusted third party |
+| **USDC Stablecoin** | Stable donations immune to XLM price swings — donors and coordinators always know the real-peso equivalent |
+| **Trustlines (SEP-41)** | Recipients must opt-in to USDC before receiving, ensuring protocol-level compliance |
+| **Soroban Events** | `donated`, `emergency_declared`, `withdrawn` — every state change emitted to Stellar Expert for public auditability |
 
 ---
 
@@ -103,7 +103,7 @@ Stellar Expert · Convex Real-Time Feed
 - WASM target: `rustup target add wasm32-unknown-unknown`
 - [Stellar CLI](https://developers.stellar.org/docs/tools/stellar-cli): `cargo install --locked stellar-cli --features opt`
 - [Node.js](https://nodejs.org) v18+
-- [Freighter Wallet](https://www.freighter.app) browser extension (set to **Testnet**)
+- [Freighter Wallet](https://freighter.app) browser extension (set to **Testnet**)
 
 ---
 
@@ -117,17 +117,21 @@ cd Tulong-Chain/contracts
 cargo test
 ```
 
-Expected output:
+**Expected output:**
 
 ```
-running 5 tests
-test test::test_initialize                ... ok
-test test::test_single_donation           ... ok
-test test::test_multiple_donors           ... ok
-test test::test_emergency_lifecycle       ... ok
+running 9 tests
+test test::test_initialize ... ok
+test test::test_emergency_lifecycle ... ok
+test test::test_emergency_toggle ... ok
+test test::test_single_donation ... ok
+test test::test_zero_donation ... ok
+test test::test_over_withdraw - should panic ... ok
 test test::test_withdraw_during_emergency ... ok
+test test::test_multiple_donors ... ok
+test test::test_donation_history_integrity ... ok
 
-test result: ok. 5 passed; 0 failed
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.08s
 ```
 
 ### 2. Build the Contract
@@ -175,6 +179,7 @@ npm run dev
 ##  Contract Invocations
 
 **Donate USDC** (500000000 = 50 USDC in stroops)
+
 ```bash
 stellar contract invoke \
   --id CCHK4RPWA66DAMY4BAZOTGRCF7Y3RHAODOXZVKFMZ7FNO2ZFEZUMR4CO \
@@ -187,6 +192,7 @@ stellar contract invoke \
 ```
 
 **Declare emergency**
+
 ```bash
 stellar contract invoke \
   --id CCHK4RPWA66DAMY4BAZOTGRCF7Y3RHAODOXZVKFMZ7FNO2ZFEZUMR4CO \
@@ -196,6 +202,7 @@ stellar contract invoke \
 ```
 
 **Withdraw funds**
+
 ```bash
 stellar contract invoke \
   --id CCHK4RPWA66DAMY4BAZOTGRCF7Y3RHAODOXZVKFMZ7FNO2ZFEZUMR4CO \
@@ -209,6 +216,7 @@ stellar contract invoke \
 ```
 
 **Lift emergency**
+
 ```bash
 stellar contract invoke \
   --id CCHK4RPWA66DAMY4BAZOTGRCF7Y3RHAODOXZVKFMZ7FNO2ZFEZUMR4CO \
@@ -218,6 +226,7 @@ stellar contract invoke \
 ```
 
 **Check balance**
+
 ```bash
 stellar contract invoke \
   --id CCHK4RPWA66DAMY4BAZOTGRCF7Y3RHAODOXZVKFMZ7FNO2ZFEZUMR4CO \
@@ -234,9 +243,19 @@ stellar contract invoke \
 |---|---|
 | `test_initialize` | Zero balances and emergency flag off at deploy |
 | `test_single_donation` | Donor transfer completes and balance updates correctly |
-| `test_multiple_donors` | Fund accumulation works across 3 independent donors |
+| `test_multiple_donors` | Fund accumulation works across independent donors |
 | `test_emergency_lifecycle` | Declare → verify active → lift → verify inactive |
+| `test_emergency_toggle` | Multiple sequential emergency toggles work correctly |
 | `test_withdraw_during_emergency` | Two sequential withdrawals produce correct cumulative state |
+| `test_over_withdraw` | Withdrawals exceeding balance are rejected with panic |
+| `test_zero_donation` | Non-zero donation validation works |
+| `test_donation_history_integrity` | Donation amounts and ordering tracked accurately |
+
+All 9 tests pass:
+
+```
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.08s
+```
 
 ---
 
@@ -244,17 +263,26 @@ stellar contract invoke \
 
 ```
 Tulong-Chain/
-├── contracts/
+├── contracts/              # Soroban smart contract (Rust)
+│   ├── Cargo.toml
 │   ├── src/
-│   │   ├── lib.rs       # Smart contract: donate, emergency gate, withdraw
-│   │   └── test.rs      # 5 test cases
-│   └── Cargo.toml
-├── frontend/
+│   │   ├── lib.rs         # Main contract: donate, emergency, withdraw, views
+│   │   └── test.rs        # 9 comprehensive test cases
+├── frontend/               # React + Vite frontend
 │   ├── src/
-│   │   ├── App.tsx
+│   │   ├── App.tsx        # Main app with wallet connection
+│   │   ├── lib/
+│   │   │   ├── stellar.ts # Soroban contract interactions (with caching)
+│   │   │   ├── freighter.ts # Freighter wallet utilities
+│   │   │   └── config.ts  # Environment configuration
+│   │   ├── views/
+│   │   │   ├── HomePage.tsx      # Landing page with CTA
+│   │   │   └── DashboardPage.tsx # Interactive relief dashboard
 │   │   └── components/
-│   ├── .env             # VITE_CONTRACT_ID=CCHK4RPWA66DAMY4...
-│   └── package.json
+│   │       ├── DonateForm.tsx    # USDC donation form
+│   │       ├── WithdrawForm.tsx  # Admin withdrawal interface
+│   │       ├── ActivityFeed.tsx  # Real-time on-chain events
+│   │       └── StatsCard.tsx     # Balance display cards
 └── README.md
 ```
 
@@ -263,13 +291,13 @@ Tulong-Chain/
 ##  Target Users
 
 **Donors**
-- OFWs (Overseas Filipino Workers) sending relief money home during typhoon season
-- Filipino diaspora in the US, Canada, UAE — currently paying Western Union or Remitly fees
-- Local NGO members in Luzon, Visayas, and Mindanao who want transparent donation tracking
+- OFWs sending relief money home during typhoon season
+- Filipino diaspora in the US, Canada, UAE avoiding Western Union fees
+- Local NGO members wanting transparent donation tracking
 
 **Coordinators / Admins**
-- Verified barangay relief coordinators managing fund release during active emergencies
-- LGU-affiliated organizations that need auditable disbursement records for accountability reports
+- Verified barangay relief coordinators managing fund release
+- LGU-affiliated organizations needing auditable disbursement records
 
 ---
 
@@ -302,12 +330,12 @@ Tulong-Chain/
 
 ### Submission Checklist
 
-- [ ] `cargo test` passes (5 tests)
-- [ ] Contract deployed to Stellar Testnet
-- [ ] GitHub repository is public
-- [ ] Frontend runs on Vercel without errors
-- [ ] Convex real-time feed connected
-- [ ] Rise In submission form completed
+- [x] `cargo test` passes (9 tests)
+- [x] Contract deployed to Stellar Testnet
+- [x] GitHub repository is public
+- [x] Frontend runs on Vercel without errors
+- [x] Convex real-time feed connected
+- [x] Rise In submission form completed
 
 ---
 
