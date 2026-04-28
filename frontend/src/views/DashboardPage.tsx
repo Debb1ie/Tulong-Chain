@@ -25,6 +25,7 @@ import type { WalletState, FundStats } from "../types";
 interface Props {
   wallet: WalletState;
   onBack: () => void;
+  onConnect: () => void;
 }
 
 export default function DashboardPage({ wallet, onBack }: Props) {
@@ -274,7 +275,7 @@ export default function DashboardPage({ wallet, onBack }: Props) {
         </div>
 
         <div className="donate-section">
-          <DonateForm wallet={wallet} isAdmin={true} />
+          <DonateForm wallet={wallet} isAdmin={true} onConnect={onConnect} />
         </div>
 
         <div className="history-section">

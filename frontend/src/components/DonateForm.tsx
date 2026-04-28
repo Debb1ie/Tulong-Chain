@@ -7,7 +7,27 @@ import type { WalletState } from "../types";
 interface Props {
   wallet: WalletState;
   isAdmin?: boolean;
+  onConnect?: () => void;
 }
+
+export default function DonateForm({ wallet, isAdmin = false, onConnect }: Props) {
+  const [asset, setAsset] = useState<AssetType>("XLM");
+  const [donationAmount, setDonationAmount] = useState(0.1);
+  const [donating, setDonating] = useState(false);
+  const [statusMsg, setStatusMsg] = useState("");
+
+  if (!wallet.connected) {
+    return (
+      <div className="donate-simple">
+        <p className="donate-prompt">Connect your Freighter wallet to donate.</p>
+        {onConnect && (
+          <button className="btn-primary" onClick={onConnect}>
+            Connect Freighter
+          </button>
+        )}
+      </div>
+    );
+  }
 
 type AssetType = "USDC" | "XLM";
 
@@ -61,12 +81,14 @@ export default function DonateForm({ wallet, isAdmin = false }: Props) {
       {/* Asset Toggle */}
       <div className="asset-toggle">
         <button
+          type="button"
           className={`asset-btn ${asset === "XLM" ? "active" : ""}`}
           onClick={() => setAsset("XLM")}
         >
           XLM (Native)
         </button>
         <button
+          type="button"
           className={`asset-btn ${asset === "USDC" ? "active" : ""}`}
           onClick={() => setAsset("USDC")}
         >

@@ -34,7 +34,7 @@ export default function App() {
     }
   }
 
-  return (
+   return (
     <ConvexProvider client={convex}>
       {page === "home" ? (
         <HomePage
@@ -47,6 +47,7 @@ export default function App() {
         <DashboardPage
           wallet={wallet}
           onBack={() => setPage("home")}
+          onConnect={handleConnect}
         />
       )}
     </ConvexProvider>

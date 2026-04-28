@@ -3173,13 +3173,124 @@ body::before {
   flex-shrink: 0;
 }
 
-/* ── DONATE AMOUNT BUTTONS ─────────────────────────────────── */
+/* ── ASSET TOGGLE ────────────────────────────────────────────────────── */
+
+.asset-toggle {
+  display: flex;
+  gap: 0.5rem;
+  margin: 0.5rem 0;
+}
+
+.asset-btn {
+  flex: 1;
+  padding: 0.7rem 1rem;
+  background: var(--white);
+  border: 2px solid var(--black);
+  border-radius: var(--r-sm);
+  font-family: var(--display);
+  font-size: 0.85rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all var(--t-fast);
+  box-shadow: 0 3px 0 var(--black-2);
+  color: var(--black);
+  text-align: center;
+}
+
+.asset-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 0 var(--black-2);
+}
+
+.asset-btn:active:not(:disabled) {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 var(--black-2);
+}
+
+.asset-btn.active {
+  background: var(--black);
+  color: var(--white);
+}
+
+.asset-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ── DONATE AMOUNT BUTTONS ─────────────────────────────────────────── */
 
 .donate-amounts {
   display: flex;
   gap: 0.5rem;
   flex-wrap: wrap;
-  margin: 0.25rem 0;
+  margin: 0.75rem 0;
+}
+
+.donate-amount-btn {
+  flex: 1;
+  min-width: 70px;
+  padding: 0.75rem 0.5rem;
+  background: var(--white);
+  border: 2px solid var(--black);
+  border-radius: var(--r-sm);
+  font-family: var(--display);
+  font-size: 0.95rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all var(--t-fast);
+  box-shadow: 0 3px 0 var(--black-2);
+  color: var(--black);
+}
+
+.donate-amount-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 0 var(--black-2);
+}
+
+.donate-amount-btn:active:not(:disabled) {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 var(--black-2);
+}
+
+.donate-amount-btn.active {
+  background: var(--black);
+  color: var(--white);
+}
+
+.donate-amount-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.donate-submit {
+  width: 100%;
+  margin-top: 0.5rem;
+  padding: 1rem;
+  font-size: 1rem;
+}
+
+/* ── DONATE STATUS ──────────────────────────────────────────────────── */
+
+.donate-status {
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-align: center;
+  margin-top: 0.5rem;
+  padding: 0.75rem;
+  border-radius: var(--r-sm);
+  background: var(--off-white);
+}
+
+.donate-status.success {
+  color: var(--green);
+  background: var(--green-light);
+  border: 1px solid var(--green);
+}
+
+.donate-status.error {
+  color: var(--red);
+  background: var(--red-light);
+  border: 1px solid var(--red);
 }
 
 .donate-amount-btn {
@@ -3224,6 +3335,51 @@ body::before {
   font-size: 1rem;
 }
 
+/* ── ASSET TOGGLE ────────────────────────────────────────────────────── */
+
+.asset-toggle {
+  display: flex;
+  gap: 0.5rem;
+  margin: 0.5rem 0;
+}
+
+.asset-btn {
+  flex: 1;
+  padding: 0.6rem 1rem;
+  background: var(--white);
+  border: 2px solid var(--black);
+  border-radius: var(--r-sm);
+  font-family: var(--display);
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all var(--t-fast);
+  box-shadow: 0 3px 0 var(--black-2);
+  color: var(--black);
+}
+
+.asset-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 0 var(--black-2);
+}
+
+.asset-btn:active:not(:disabled) {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 var(--black-2);
+}
+
+.asset-btn.active {
+  background: var(--black);
+  color: var(--white);
+}
+
+.asset-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ── DONATE STATUS ──────────────────────────────────────────────────── */
+
 .donate-status {
   font-size: 0.85rem;
   font-weight: 700;
@@ -3234,13 +3390,18 @@ body::before {
   background: var(--off-white);
 }
 
-.donate-status:has-text("✅") {
-  color: var(--green-2);
+.donate-status.success {
+  color: var(--green);
+  background: var(--green-light);
+  border: 1px solid var(--green);
 }
 
-.donate-status:has-text("❌") {
+.donate-status.error {
   color: var(--red);
+  background: var(--red-light);
+  border: 1px solid var(--red);
 }
+
 
 /* ── TRANSACTION HISTORY ─────────────────────────────────────────── */
 
