@@ -24,21 +24,21 @@ export default function DonateForm({ onDonate, loading }: Props) {
 
   return (
     <div>
-      <h3 className="form-h3">Donate XLM to the Relief Fund</h3>
+      <h3 className="form-h3">Donate USDC to the Relief Fund</h3>
       <p className="form-desc">
-        Your XLM will be sent directly to the Soroban escrow contract on Stellar Testnet.
-        Every transaction is traceable on-chain.
+        Your USDC will be locked in the Soroban escrow contract until an emergency is declared.
+        Every centavo is traceable on-chain.
       </p>
       <p className="form-desc" style={{ fontSize: "0.75rem", color: "var(--muted)", marginTop: "-0.5rem", marginBottom: "1rem" }}>
-        Donation address: <span style={{ fontFamily: "monospace", color: "var(--yellow)" }}>
-          {CONFIG.contractId.slice(0, 8)}...{CONFIG.contractId.slice(-6)}
+        Donation contract address: <span style={{ fontFamily: "monospace", color: "var(--yellow)", wordBreak: "break-all" }}>
+          {CONFIG.contractId}
         </span>
       </p>
 
       <div className="quick-amounts">
         {QUICK_AMOUNTS.map((a) => (
           <button key={a} className="quick-btn" onClick={() => setAmount(String(a))}>
-            {a} XLM
+            ${a}
           </button>
         ))}
       </div>
@@ -46,13 +46,13 @@ export default function DonateForm({ onDonate, loading }: Props) {
       <div className="input-row">
         <input
           type="number"
-          placeholder="Enter XLM amount"
+          placeholder="Enter USDC amount"
           value={amount}
           onChange={(e) => setAmount(e.target.value)}
-          min="0.1"
-          step="0.1"
+          min="0.01"
+          step="0.01"
         />
-        <span className="input-unit">XLM</span>
+        <span className="input-unit">USDC</span>
       </div>
 
       <button className="btn-primary" onClick={handleSubmit} disabled={loading}>
@@ -62,7 +62,7 @@ export default function DonateForm({ onDonate, loading }: Props) {
              Processing...
            </>
          ) : (
-           "Donate XLM via Freighter"
+           "Donate USDC via Freighter"
          )}
       </button>
     </div>

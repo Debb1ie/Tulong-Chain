@@ -6,15 +6,15 @@ import StatsCard from "../components/StatsCard";
 import DonateForm from "../components/DonateForm";
 import WithdrawForm from "../components/WithdrawForm";
 import ActivityFeed from "../components/ActivityFeed";
- import {
-   donateXLM,
-   declareEmergency,
-   liftEmergency,
-   getTotalDonated,
-   getTotalWithdrawn,
-   getBalance,
-   isEmergency,
- } from "../lib/stellar";
+import {
+  donate,
+  declareEmergency,
+  liftEmergency,
+  getTotalDonated,
+  getTotalWithdrawn,
+  getBalance,
+  isEmergency,
+} from "../lib/stellar";
 import { getNativeBalance, WrongNetworkError, AccountNotFundedError, verifyAccountReady } from "../lib/freighter";
 import type { WalletState, FundStats } from "../types";
 
@@ -85,9 +85,9 @@ export default function DashboardPage({ wallet, onBack }: Props) {
     return () => clearInterval(interval);
   }, [refreshStats]);
 
-  async function handleDonate(amount: number) {
+   async function handleDonate(amount: number) {
     if (!wallet.address) return;
-
+    
     try {
       await verifyAccountReady(wallet.address);
     } catch (err: any) {
@@ -105,10 +105,10 @@ export default function DashboardPage({ wallet, onBack }: Props) {
 
     setLoading(true);
     try {
-      const txHash = await donateXLM(wallet.address, amount);
+      const txHash = await donate(wallet.address, amount);
       await recordDonation({ donor: wallet.address, amount, txHash });
       await refreshStats(true);
-      showToast("success", `Successfully donated ${amount} XLM! Tx: ${txHash.slice(0, 8)}...`);
+      showToast("success", `Successfully donated ${amount} USDC! Tx: ${txHash.slice(0, 8)}...`);
     } catch (err: any) {
       if (err.message.includes("network") || err.message.includes("testnet")) {
         showToast("error", "Wrong network. Please switch Freighter to Testnet.");
@@ -118,7 +118,7 @@ export default function DashboardPage({ wallet, onBack }: Props) {
     } finally {
       setLoading(false);
     }
-   }
+  }
 
   async function handleWithdraw(amount: number, purpose: string) {
     if (!wallet.address) return;
@@ -314,19 +314,19 @@ export default function DashboardPage({ wallet, onBack }: Props) {
         <div className="stats-section">
           <div className="stats-grid">
             <StatsCard
-              label="USDC Donated"
+              label="Total Donated"
               value={`${stats.totalDonated.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USDC`}
               icon="$"
               highlight={false}
             />
             <StatsCard
-              label="USDC Withdrawn"
+              label="Total Withdrawn"
               value={`${stats.totalWithdrawn.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USDC`}
               icon="out"
               highlight={false}
             />
             <StatsCard
-              label="USDC in Escrow"
+              label="Available Balance"
               value={`${stats.balance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USDC`}
               icon="bank"
               highlight={true}
@@ -341,7 +341,7 @@ export default function DashboardPage({ wallet, onBack }: Props) {
 
           <div className="analytics-bar">
             <div className="analytics-item">
-              <span className="analytics-label">USDC Utilization</span>
+              <span className="analytics-label">Fund utilization</span>
               <div className="analytics-track">
                 <div className="analytics-fill analytics-fill-coral" style={{ width: `${utilizationPct}%` }} />
               </div>
@@ -349,7 +349,7 @@ export default function DashboardPage({ wallet, onBack }: Props) {
             </div>
             <div className="analytics-divider" />
             <div className="analytics-item">
-              <span className="analytics-label">USDC in Escrow</span>
+              <span className="analytics-label">In escrow</span>
               <div className="analytics-track">
                 <div className="analytics-fill analytics-fill-leaf" style={{ width: `${escrowPct}%` }} />
               </div>
@@ -371,7 +371,7 @@ export default function DashboardPage({ wallet, onBack }: Props) {
                   onClick={() => setTab("donate")}
                 >
                   <span className="tab-icon">$</span>
-                  Donate XLM
+                  Donate USDC
                 </button>
               <button
                 className={`tab-btn ${tab === "withdraw" ? "tab-btn-active" : ""}`}
@@ -387,8 +387,7 @@ export default function DashboardPage({ wallet, onBack }: Props) {
                 <>
                    <div className="panel-info">
                      <span className="panel-info-icon">i</span>
-                     XLM donations are sent directly to the Soroban escrow contract on Stellar Testnet.
-                     All transactions are recorded on-chain and publicly verifiable.
+                     Funds are locked in the Soroban escrow contract until an emergency is declared. All transactions are recorded on-chain and publicly verifiable.
                    </div>
                   <DonateForm onDonate={handleDonate} loading={loading} />
                 </>
@@ -431,7 +430,7 @@ export default function DashboardPage({ wallet, onBack }: Props) {
               </div>
                <div className="csp-row">
                  <span className="csp-key">Token</span>
-                 <span className="csp-val">XLM (Native)</span>
+                 <span className="csp-val">USDC (SEP-41)</span>
                </div>
               <div className="csp-row">
                 <span className="csp-key">Standard</span>

@@ -2,11 +2,8 @@
 // All Soroban contract interactions for TulongChain
 
 import {
-  Account,
-  Asset,
   Contract,
   Networks,
-  Operation,
   SorobanRpc,
   TransactionBuilder,
   nativeToScVal,
@@ -15,9 +12,9 @@ import {
   BASE_FEE,
   xdr,
 } from "@stellar/stellar-sdk";
-import HorizonServer from "@stellar/stellar-sdk";
 import { CONFIG, toUSDC } from "./config";
-import { signTx, TESTNET_HORIZON_URL } from "./freighter";
+import { signTx } from "./freighter";
+import { TESTNET_HORIZON_URL } from "./freighter";
 
 const server = new SorobanRpc.Server(CONFIG.rpcUrl);
 
@@ -77,7 +74,7 @@ async function invokeContract(
   callerAddress: string,
   method: string,
   args: xdr.ScVal[]
-): Promise<unknown> {
+): Promise<{ result: unknown; txHash: string }> {
   const account = await server.getAccount(callerAddress);
   const contract = new Contract(CONFIG.contractId);
 
@@ -117,7 +114,10 @@ async function invokeContract(
   }
 
   if (getResult.status === SorobanRpc.Api.GetTransactionStatus.SUCCESS) {
-    return getResult.returnValue ? scValToNative(getResult.returnValue) : null;
+    return {
+      result: getResult.returnValue ? scValToNative(getResult.returnValue) : null,
+      txHash: submitResult.hash,
+    };
   }
 
   throw new Error("Transaction failed");
@@ -129,48 +129,13 @@ async function invokeContract(
 export async function donate(
   callerAddress: string,
   amountUsdc: number
-): Promise<void> {
-  await invokeContract(callerAddress, "donate", [
+): Promise<string> {
+  const { txHash } = await invokeContract(callerAddress, "donate", [
     new Address(callerAddress).toScVal(),
     new Address(CONFIG.usdcContractId).toScVal(),
     nativeToScVal(toUSDC(amountUsdc), { type: "i128" }),
   ]);
-}
-
-/** Donate native XLM directly to the contract address (testnet-friendly) */
-export async function donateXLM(
-  callerAddress: string,
-  amountXlm: number
-): Promise<string> {
-  // Build a native payment to the contract using Horizon
-  const horizon = new HorizonServer(TESTNET_HORIZON_URL);
-  const account = await horizon.loadAccount(callerAddress);
-
-  const paymentOp = Operation.payment({
-    destination: CONFIG.contractId,
-    amount: String(amountXlm),
-    asset: Asset.native(),
-  });
-
-  const tx = new TransactionBuilder(account, {
-    fee: BASE_FEE,
-    networkPassphrase: CONFIG.networkPassphrase,
-  })
-    .addOperation(paymentOp)
-    .setTimeout(30)
-    .build();
-
-  // Sign with Freighter
-  const signedXdr = await signTx(tx.toXDR(), CONFIG.networkPassphrase);
-
-  // Submit via Horizon
-  const result = await horizon.submitTransaction(signedXdr);
-
-  if (result && "hash" in result) {
-    return result.hash;
-  }
-
-  throw new Error("Transaction submission failed");
+  return txHash;
 }
 
 export async function declareEmergency(callerAddress: string): Promise<void> {

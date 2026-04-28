@@ -47,11 +47,11 @@ const IMPACT_STATS = [
     },
     {
       step: "02",
-      icon: "L",
+      icon: "$",
       color: "sun",
-      title: "Donate XLM",
-      body: "Enter any amount. Freighter signs in one click. XLM goes directly to the Soroban escrow contract on-chain. No intermediary touches it.",
-      fn: "payment(contract, amount)",
+      title: "Donate USDC",
+      body: "Enter any amount. Freighter signs in one click. USDC locks into the Soroban escrow contract. No intermediary touches it.",
+      fn: "donate(donor, token, amount)",
     },
     {
       step: "03",
@@ -66,7 +66,7 @@ const IMPACT_STATS = [
       icon: "OK",
       color: "sky",
       title: "Release funds",
-      body: "Coordinator withdraws assets with a purpose string. Logged on-chain permanently. Every centavo traceable by anyone, forever.",
+      body: "Coordinator withdraws USDC with a purpose string. Logged on-chain permanently. Every centavo traceable by anyone, forever.",
       fn: "withdraw(coordinator, token, amount, purpose)",
     },
   ];
@@ -138,10 +138,10 @@ const WHY_STELLAR = [
 ];
 
   const RECENT_DONATIONS = [
-    { ava: "JC", cls: "c1", addr: "GBC...4F2A", time: "2 min ago", amt: "+250 XLM", flag: "PH" },
-    { ava: "AL", cls: "c2", addr: "GAX...9D1C", time: "11 min ago", amt: "+100 XLM", flag: "US" },
-    { ava: "MR", cls: "c3", addr: "GTP...2B7E", time: "28 min ago", amt: "+500 XLM", flag: "JP" },
-    { ava: "KN", cls: "c4", addr: "GDA...5C1F", time: "1 hr ago", amt: "+75 XLM", flag: "SG" },
+    { ava: "JC", cls: "c1", addr: "GBC...4F2A", time: "2 min ago", amt: "+250 USDC", flag: "PH" },
+    { ava: "AL", cls: "c2", addr: "GAX...9D1C", time: "11 min ago", amt: "+100 USDC", flag: "US" },
+    { ava: "MR", cls: "c3", addr: "GTP...2B7E", time: "28 min ago", amt: "+500 USDC", flag: "JP" },
+    { ava: "KN", cls: "c4", addr: "GDA...5C1F", time: "1 hr ago", amt: "+75 USDC", flag: "SG" },
   ];
 
 function useCountUp(target: number, duration = 2000) {
@@ -354,7 +354,7 @@ export default function HomePage({
             </h1>
 
             <p className="hero-sub">
-              TulongChain locks donor XLM in a Soroban smart contract escrow.
+              TulongChain locks donor USDC in a Soroban smart contract escrow.
               Funds only release when a verified coordinator declares a disaster
               emergency - every centavo public and traceable on-chain in under 5 seconds.
             </p>
@@ -423,7 +423,7 @@ export default function HomePage({
               </div>
 
                <DonatedCounter />
-               <div className="fund-amount-unit">XLM raised</div>
+               <div className="fund-amount-unit">USDC raised</div>
                <div className="fund-desc">Typhoon Relief Fund 2026</div>
 
               <div className="progress-wrap">
@@ -433,7 +433,7 @@ export default function HomePage({
                   </div>
                 </div>
                 <div className="progress-labels">
-                  <span>0 XLM</span>
+                  <span>0 USDC</span>
                   <span className="progress-pct">70% of 12,000 goal</span>
                 </div>
               </div>
@@ -470,7 +470,7 @@ export default function HomePage({
                          style={{ padding: "0.5rem 0.75rem", fontSize: "0.8rem", flex: 1, minWidth: "70px" }}
                          onClick={handleQuickDonate}
                        >
-                         {amt} XLM
+                         ${amt}
                        </button>
                      ))}
                    </div>

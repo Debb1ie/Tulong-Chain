@@ -56,7 +56,7 @@ export const recordDonation = mutation({
       type: "donation",
       address: args.donor,
       amount: args.amount,
-      description: `Donated ${args.amount.toFixed(2)} XLM to TulongChain`,
+      description: `Donated ${args.amount.toFixed(2)} USDC to TulongChain`,
       timestamp: now,
     });
   },
