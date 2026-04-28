@@ -4,6 +4,8 @@ import { donate, donateXlm } from "../lib/stellar";
 import { downloadFeedbackCSV } from "../lib/feedback";
 import type { WalletState } from "../types";
 
+type AssetType = "USDC" | "XLM";
+
 interface Props {
   wallet: WalletState;
   isAdmin?: boolean;
@@ -29,22 +31,6 @@ export default function DonateForm({ wallet, isAdmin = false, onConnect }: Props
     );
   }
 
-type AssetType = "USDC" | "XLM";
-
-export default function DonateForm({ wallet, isAdmin = false }: Props) {
-  const [asset, setAsset] = useState<AssetType>("XLM"); // default to XLM (no trustline needed)
-  const [donationAmount, setDonationAmount] = useState(0.1);
-  const [donating, setDonating] = useState(false);
-  const [statusMsg, setStatusMsg] = useState("");
-
-  if (!wallet.connected) {
-    return (
-      <div className="donate-simple">
-        <p className="donate-prompt">Connect your Freighter wallet to donate.</p>
-      </div>
-    );
-  }
-
   async function handleDonate(amount: number) {
     if (!wallet.address) return;
     setDonating(true);
@@ -66,7 +52,6 @@ export default function DonateForm({ wallet, isAdmin = false }: Props) {
     }
   }
 
-  // Asset-specific amounts
   const amountsXlm = [0.1, 0.5, 1, 5];
   const amountsUsdc = [0.1, 0.5, 1, 5];
 
@@ -78,7 +63,6 @@ export default function DonateForm({ wallet, isAdmin = false }: Props) {
         Your donation appears in real-time below.
       </p>
 
-      {/* Asset Toggle */}
       <div className="asset-toggle">
         <button
           type="button"
@@ -96,7 +80,6 @@ export default function DonateForm({ wallet, isAdmin = false }: Props) {
         </button>
       </div>
 
-      {/* Amount Buttons */}
       <div className="donate-amounts">
         {(asset === "XLM" ? amountsXlm : amountsUsdc).map((amt) => (
           <button
@@ -130,17 +113,20 @@ export default function DonateForm({ wallet, isAdmin = false }: Props) {
         <div className="step-item"><span className="step-num-mini">3</span><span>Watch it appear in history</span></div>
       </div>
 
-      {/* Note for USDC */}
       {asset === "USDC" && (
         <p style={{ fontSize: "0.8rem", color: "var(--muted)", marginTop: "0.5rem" }}>
-          ⚠️ First-time USDC donors: Make sure your Freighter wallet has a USDC trustline.
+          ⚠️ First-time USDC donors: Add a USDC trustline in Freighter first.
         </p>
       )}
 
       {isAdmin && (
         <div style={{ marginTop: "1.5rem", padding: "1rem", borderTop: "2px dashed var(--border-strong)" }}>
           <p style={{ fontWeight: 700, marginBottom: "0.5rem", fontSize: "0.9rem" }}>Admin Tools</p>
-          <button className="btn-secondary" style={{ fontSize: "0.85rem", padding: "0.5rem 1rem" }} onClick={() => downloadFeedbackCSV(`tulong-feedback-${Date.now()}.csv`)}>
+          <button
+            className="btn-secondary"
+            style={{ fontSize: "0.85rem", padding: "0.5rem 1rem" }}
+            onClick={() => downloadFeedbackCSV(`tulong-feedback-${Date.now()}.csv`)}
+          >
             📥 Download All User Feedback (CSV)
           </button>
         </div>

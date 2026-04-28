@@ -1,7 +1,5 @@
 // src/views/DashboardPage.tsx
 import { useState, useEffect, useCallback } from "react";
-import { useQuery } from "convex/react";
-import { api } from "../../convex/_generated/api";
 import StatsCard from "../components/StatsCard";
 import DonateForm from "../components/DonateForm";
 import TransactionHistory from "../components/TransactionHistory";
@@ -25,10 +23,20 @@ import type { WalletState, FundStats } from "../types";
 interface Props {
   wallet: WalletState;
   onBack: () => void;
-  onConnect: () => void;
+  onConnect?: () => void;
 }
 
-export default function DashboardPage({ wallet, onBack }: Props) {
+// Matches ActivityFeed expected shape
+interface ActivityItem {
+  _id: string;
+  type: "donation" | "withdrawal" | "emergency_declared" | "emergency_lifted";
+  address: string;
+  amount?: number;
+  description: string;
+  timestamp: number;
+}
+
+export default function DashboardPage({ wallet, onBack, onConnect }: Props) {
   const [stats, setStats] = useState<FundStats>({
     totalDonated: 0,
     totalWithdrawn: 0,
@@ -44,9 +52,8 @@ export default function DashboardPage({ wallet, onBack }: Props) {
   const [refreshing, setRefreshing] = useState(false);
   const [lastRefresh, setLastRefresh] = useState<Date>(new Date());
   const [contractXlmBalance, setContractXlmBalance] = useState<string>("0");
+  const [activity, setActivity] = useState<ActivityItem[]>([]);
   const [showFeedbackModal, setShowFeedbackModal] = useState(false);
-
-  const activity = useQuery(api.fund.getActivityFeed);
 
   const refreshStats = useCallback(async (silent = false) => {
     if (!silent) setRefreshing(true);
