@@ -336,6 +336,18 @@
                                 },
                                 {
                                   "key": {
+                                    "symbol": "asset"
+                                  },
+                                  "val": {
+                                    "vec": [
+                                      {
+                                        "symbol": "Usdc"
+                                      }
+                                    ]
+                                  }
+                                },
+                                {
+                                  "key": {
                                     "symbol": "donor"
                                   },
                                   "val": {

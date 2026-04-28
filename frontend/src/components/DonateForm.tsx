@@ -1,15 +1,17 @@
 // src/components/DonateForm.tsx
 import { useState } from "react";
 import { CONFIG } from "../lib/config";
+import { downloadFeedbackCSV } from "../lib/feedback";
 
 interface Props {
   wallet: {
     connected: boolean;
     address: string | null;
   };
+  isAdmin?: boolean;
 }
 
-export default function DonateForm({ wallet }: Props) {
+export default function DonateForm({ wallet, isAdmin = false }: Props) {
   const [copied, setCopied] = useState(false);
 
   function copyAddress() {
@@ -58,6 +60,23 @@ export default function DonateForm({ wallet }: Props) {
           <span>Your donation appears below automatically</span>
         </div>
       </div>
+
+      {/* Admin: Export Feedback Button */}
+      {isAdmin && (
+        <div style={{ marginTop: "1.5rem", padding: "1rem", borderTop: "2px dashed var(--border-strong)" }}>
+          <p style={{ fontWeight: 700, marginBottom: "0.5rem", fontSize: "0.9rem" }}>Admin Tools</p>
+          <button
+            className="btn-secondary"
+            style={{ fontSize: "0.85rem", padding: "0.5rem 1rem" }}
+            onClick={() => downloadFeedbackCSV(`tulong-feedback-${Date.now()}.csv`)}
+          >
+            📥 Download All User Feedback (CSV)
+          </button>
+          <p style={{ fontSize: "0.75rem", color: "var(--muted)", marginTop: "0.5rem" }}>
+            Exports feedback collected from the in-app modal (localStorage).
+          </p>
+        </div>
+      )}
     </div>
   );
 }

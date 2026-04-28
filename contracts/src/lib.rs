@@ -265,6 +265,45 @@ impl TulongChain {
             .publish((Symbol::new(&env, "donated"),), (donor, amount));
     }
 
+    // ── XLM Donation ────────────────────────────────────────────────────────────
+
+    pub fn donate_xlm(env: Env, donor: Address, amount: i128) {
+        donor.require_auth();
+        assert!(!env.storage().instance().get(&DataKey::Paused).unwrap_or(false), "paused");
+        assert!(amount > 0, "Amount must be > 0");
+
+        // Transfer native XLM from donor to contract
+        env.transfer(donor.clone(), env.current_contract_address(), amount.clone());
+
+        // Record donation
+        let mut donations: Vec<Donation> = env
+            .storage()
+            .instance()
+            .get(&DataKey::Donations)
+            .unwrap_or(Vec::new(&env));
+
+        donations.push_back(Donation {
+            donor: donor.clone(),
+            amount,
+            timestamp: env.ledger().timestamp(),
+            asset: AssetType::Xlm,
+        });
+
+        env.storage().instance().set(&DataKey::Donations, &donations);
+
+        let total: i128 = env
+            .storage()
+            .instance()
+            .get(&DataKey::TotalDonated)
+            .unwrap_or(0);
+        env.storage()
+            .instance()
+            .set(&DataKey::TotalDonated, &(total + amount));
+
+        env.events()
+            .publish((Symbol::new(&env, "donated_xlm"),), (donor, amount));
+    }
+
     pub fn batch_donate(
         env: Env,
         donor: Address,

@@ -409,6 +409,18 @@
                                 },
                                 {
                                   "key": {
+                                    "symbol": "asset"
+                                  },
+                                  "val": {
+                                    "vec": [
+                                      {
+                                        "symbol": "Usdc"
+                                      }
+                                    ]
+                                  }
+                                },
+                                {
+                                  "key": {
                                     "symbol": "donor"
                                   },
                                   "val": {
@@ -440,6 +452,18 @@
                                 },
                                 {
                                   "key": {
+                                    "symbol": "asset"
+                                  },
+                                  "val": {
+                                    "vec": [
+                                      {
+                                        "symbol": "Usdc"
+                                      }
+                                    ]
+                                  }
+                                },
+                                {
+                                  "key": {
                                     "symbol": "donor"
                                   },
                                   "val": {
@@ -467,6 +491,18 @@
                                       "hi": 0,
                                       "lo": 300000000
                                     }
+                                  }
+                                },
+                                {
+                                  "key": {
+                                    "symbol": "asset"
+                                  },
+                                  "val": {
+                                    "vec": [
+                                      {
+                                        "symbol": "Usdc"
+                                      }
+                                    ]
                                   }
                                 },
                                 {

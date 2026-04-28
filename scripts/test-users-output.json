@@ -1,0 +1,52 @@
+{
+  "generatedAt": "2026-04-28T20:10:56.292Z",
+  "contractId": "CBSX6H3XDLZQELJA2V2LKSELAUDSKRPVL64ZKUDUCFJWDOTDUUASP5IC",
+  "network": "testnet",
+  "users": [
+    {
+      "id": 1,
+      "name": "Alex",
+      "wallet": "GBMSKDXTC23H25L3KNQENF3B4IH3FHQMXW2QSZTTRKZS2TVJ3WG7K7ON",
+      "secret": "SCACGHDOAILHH3NPJMTRLQCLVCVMWOSJBFVWX6MRIDCFDLOJYMXJL2AM",
+      "rating": 5,
+      "feedback": "Super clean UI. Would love batch donation support!",
+      "donationAmount": 0.1
+    },
+    {
+      "id": 2,
+      "name": "Maria",
+      "wallet": "GALZM7PKII5CV2MDYH6X66QA5LFFY4VWXMDR2LXFNHXHCKBL4QI5KFUH",
+      "secret": "SDMJ3N6PL76N7V3LSMCDE33FZKDNHY63BGGE77DVFIHBKPEV47HTTGES",
+      "rating": 5,
+      "feedback": "Great idea! Could add email notifications when emergency declared.",
+      "donationAmount": 0.15
+    },
+    {
+      "id": 3,
+      "name": "John",
+      "wallet": "GCU7JMXHICPMQ2YYXU6J7VKKNF3OGALUAPDOTYVV45IRDM5MQ6PP6OAF",
+      "secret": "SA3IYX27DNZMZATUYH43UYTJDRRQIAQWYX3ZORBPXSYWYF2IDYMKIWEH",
+      "rating": 5,
+      "feedback": "Finally transparent relief. Add multi-sig admin for security.",
+      "donationAmount": 0.2
+    },
+    {
+      "id": 4,
+      "name": "Sarah",
+      "wallet": "GB4PHTG6LYJKKDAGDZZWU7ZWVBTKX6CGLPNQUSM3UEVDKBHAFYC47DUC",
+      "secret": "SDEKNSU5PXFHDXR6FNGWFEW7WP34YROZOQHF25D3WNCAX5HIDCHULIAB",
+      "rating": 4,
+      "feedback": "Copying contract address is tedious. QR code would help.",
+      "donationAmount": 0.25
+    },
+    {
+      "id": 5,
+      "name": "Leo",
+      "wallet": "GCIKRDTTL6MXDHOYRRY4255YEXHQBSBLH6WJDDR6VQTKUMSPKNZLCFSS",
+      "secret": "SDXK4ZSG5XAUZGEBPQTZG2BGORWIGY5BLWLX3RG7IQSMFSYOCGFF46YH",
+      "rating": 4,
+      "feedback": "Mobile wallet integration would make it more accessible.",
+      "donationAmount": 0.3
+    }
+  ]
+}

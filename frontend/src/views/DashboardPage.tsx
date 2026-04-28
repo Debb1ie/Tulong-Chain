@@ -6,6 +6,7 @@ import StatsCard from "../components/StatsCard";
 import DonateForm from "../components/DonateForm";
 import TransactionHistory from "../components/TransactionHistory";
 import ActivityFeed from "../components/ActivityFeed";
+import FeedbackModal, { type FeedbackData } from "../components/FeedbackModal";
 import {
   getTotalDonated,
   getTotalWithdrawn,
@@ -42,6 +43,7 @@ export default function DashboardPage({ wallet, onBack }: Props) {
   const [refreshing, setRefreshing] = useState(false);
   const [lastRefresh, setLastRefresh] = useState<Date>(new Date());
   const [contractXlmBalance, setContractXlmBalance] = useState<string>("0");
+  const [showFeedbackModal, setShowFeedbackModal] = useState(false);
 
   const activity = useQuery(api.fund.getActivityFeed);
 
@@ -74,6 +76,19 @@ export default function DashboardPage({ wallet, onBack }: Props) {
     const interval = setInterval(() => refreshStats(true), 30_000);
     return () => clearInterval(interval);
   }, [refreshStats]);
+
+  // Show feedback modal on first visit (once per wallet)
+  useEffect(() => {
+    if (wallet.connected && wallet.address) {
+      const key = `tulong_feedback_submitted_${wallet.address}`;
+      const alreadySubmitted = localStorage.getItem(key);
+      if (!alreadySubmitted) {
+        // Show modal after a short delay (2 seconds)
+        const timer = setTimeout(() => setShowFeedbackModal(true), 2000);
+        return () => clearTimeout(timer);
+      }
+    }
+  }, [wallet.connected, wallet.address]);
 
   // Fetch contract's native XLM balance from Horizon
   useEffect(() => {
@@ -114,6 +129,19 @@ export default function DashboardPage({ wallet, onBack }: Props) {
 
   const now = Math.floor(Date.now() / 1000);
   const isTimelockPending = !stats.isEmergency && timelockInfo.activates_at > now;
+
+  const handleFeedbackSubmit = (data: FeedbackData) => {
+    // Save to localStorage
+    const key = `tulong_feedback_submitted_${wallet.address}`;
+    localStorage.setItem(key, "true");
+
+    // Append to feedback list in localStorage
+    const feedbackList = JSON.parse(localStorage.getItem("tulong_feedback_all") || "[]");
+    feedbackList.push(data);
+    localStorage.setItem("tulong_feedback_all", JSON.stringify(feedbackList));
+
+    console.log("Feedback submitted:", data);
+  };
 
   return (
     <div className="dashboard-page">
@@ -246,7 +274,7 @@ export default function DashboardPage({ wallet, onBack }: Props) {
         </div>
 
         <div className="donate-section">
-          <DonateForm wallet={wallet} />
+          <DonateForm wallet={wallet} isAdmin={true} />
         </div>
 
         <div className="history-section">
@@ -272,6 +300,14 @@ export default function DashboardPage({ wallet, onBack }: Props) {
           </span>
         </div>
       </div>
+
+      {/* Feedback Modal */}
+      <FeedbackModal
+        wallet={wallet}
+        isOpen={showFeedbackModal}
+        onClose={() => setShowFeedbackModal(false)}
+        onSubmit={handleFeedbackSubmit}
+      />
     </div>
   );
 }
