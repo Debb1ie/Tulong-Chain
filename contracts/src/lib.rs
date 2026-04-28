@@ -28,6 +28,14 @@ pub struct Donation {
     pub donor: Address,
     pub amount: i128,
     pub timestamp: u64,
+    pub asset: AssetType,
+}
+
+#[contracttype]
+#[derive(Clone)]
+pub enum AssetType {
+    Usdc,
+    Xlm,
 }
 
 #[contracttype]

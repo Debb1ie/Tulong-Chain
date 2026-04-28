@@ -12,18 +12,17 @@ interface Props {
   onEnter: () => void;
 }
 
-const TICKER_ITEMS = [
-  "Soroban Smart Contracts",
-  "USDC Stablecoin",
-  "Instant Settlement",
-  "On-Chain Transparency",
-  "Zero Fees",
-  "Stellar Testnet",
-  "Disaster Relief",
-  "Trustlines",
-  "Filipino Families",
-  "Immutable Records",
-];
+  const TICKER_ITEMS = [
+    "Soroban Smart Contracts",
+    "XLM & USDC",
+    "Instant Settlement",
+    "On-Chain Transparency",
+    "Zero Fees",
+    "Stellar Testnet",
+    "Disaster Relief",
+    "Filipino Families",
+    "Immutable Records",
+  ];
 
 const TICKER_TEXT = Array(6)
   .fill(TICKER_ITEMS.map((t) => `${t}  -  `).join(""))
@@ -41,74 +40,74 @@ const IMPACT_STATS = [
       step: "01",
       icon: "L",
       color: "coral",
-      title: "Connect wallet",
-      body: "Open Freighter set to Testnet. Your Stellar address appears instantly - zero signup, zero email, zero gatekeeping.",
+      title: "Connect Freighter",
+      body: "Install Freighter, set to Testnet, and connect. Your Stellar address appears instantly.",
       fn: null,
     },
     {
       step: "02",
-      icon: "$",
+      icon: "S",
       color: "sun",
-      title: "Donate USDC",
-      body: "Enter any amount. Freighter signs in one click. USDC locks into the Soroban escrow contract. No intermediary touches it.",
-      fn: "donate(donor, token, amount)",
+      title: "Send XLM or USDC",
+      body: "Copy the contract address from the dashboard and send any amount directly from your wallet. No forms, no signing within the app.",
+      fn: "payment(contract, asset, amount)",
     },
     {
       step: "03",
-      icon: "!",
+      icon: "E",
       color: "leaf",
-      title: "Declare emergency",
-      body: "Admin wallet flips the on-chain flag. The contract now permits withdrawals. The event is public, timestamped, immutable.",
-      fn: "declare_emergency()",
+      title: "See it live",
+      body: "Incoming payments are detected automatically and displayed in real-time. Every transaction is on-chain, forever.",
+      fn: "Horizon.poll(contract_address)",
     },
     {
       step: "04",
-      icon: "OK",
+      icon: "K",
       color: "sky",
-      title: "Release funds",
-      body: "Coordinator withdraws USDC with a purpose string. Logged on-chain permanently. Every centavo traceable by anyone, forever.",
-      fn: "withdraw(coordinator, token, amount, purpose)",
+      title: "Admin disburses",
+      body: "When emergency is declared, the coordinator withdraws funds with a purpose string. Fully auditable.",
+      fn: "withdraw(coordinator, purpose)",
     },
   ];
 
-const CONTRACT_FNS = [
-  {
-    name: "initialize(admin)",
-    caller: "Deployer",
-    tag: "deploy",
-    desc: "Sets admin address, zeros all counters, emergency flag - false. Called once at deployment.",
-  },
-  {
-    name: "donate(donor, token, amount)",
-    caller: "Anyone",
-    tag: "anyone",
-    desc: "Transfers USDC into escrow, records donation with timestamp, emits donated event.",
-  },
-  {
-    name: "declare_emergency()",
-    caller: "Admin only",
-    tag: "admin",
-    desc: "Flips emergency flag to true. Enables withdrawals. Emits emergency_declared event on-chain.",
-  },
-  {
-    name: "withdraw(coordinator, token, amount, purpose)",
-    caller: "Admin only",
-    tag: "admin",
-    desc: "Releases USDC to coordinator with an on-chain purpose string. Guards: active emergency + sufficient balance.",
-  },
-  {
-    name: "lift_emergency()",
-    caller: "Admin only",
-    tag: "admin",
-    desc: "Disables withdrawals. Returns fund to locked escrow state. Emits emergency_lifted event.",
-  },
-  {
-    name: "get_balance() + views",
-    caller: "Read-only",
-    tag: "read",
-    desc: "Public getters: balance, total donated/withdrawn, emergency flag, full donation history array.",
-  },
-];
+  const CONTRACT_FNS = [
+    {
+      name: "initialize(admin)",
+      caller: "Deployer",
+      tag: "deploy",
+      desc: "Sets admin address, zeros all counters, emergency flag false. Called once at deployment.",
+    },
+    {
+      name: "donate(donor, token, amount)",
+      caller: "Anyone",
+      tag: "anyone",
+      desc: "Transfers USDC into escrow via Soroban token interface. Records donation with timestamp, emits event.",
+    },
+    {
+      name: "declare_emergency()",
+      caller: "Admin only",
+      tag: "admin",
+      desc: "Flips emergency flag to true. Enables withdrawals. Emits emergency_declared event.",
+    },
+    {
+      name: "withdraw(coordinator, amount, purpose)",
+      caller: "Admin only",
+      tag: "admin",
+      desc: "Releases funds to coordinator with an on-chain purpose string. Requires active emergency + sufficient balance.",
+    },
+    {
+      name: "lift_emergency()",
+      caller: "Admin only",
+      tag: "admin",
+      desc: "Disables withdrawals. Returns fund to locked escrow state.",
+    },
+    {
+      name: "Views: get_balance(), get_total_donated(), ...",
+      caller: "Read-only",
+      tag: "read",
+      desc: "Public getters for fund state, donation/withdrawal history, and emergency flag.",
+    },
+  ];
 
 const WHY_STELLAR = [
   {
@@ -138,10 +137,10 @@ const WHY_STELLAR = [
 ];
 
   const RECENT_DONATIONS = [
-    { ava: "JC", cls: "c1", addr: "GBC...4F2A", time: "2 min ago", amt: "+250 USDC", flag: "PH" },
-    { ava: "AL", cls: "c2", addr: "GAX...9D1C", time: "11 min ago", amt: "+100 USDC", flag: "US" },
-    { ava: "MR", cls: "c3", addr: "GTP...2B7E", time: "28 min ago", amt: "+500 USDC", flag: "JP" },
-    { ava: "KN", cls: "c4", addr: "GDA...5C1F", time: "1 hr ago", amt: "+75 USDC", flag: "SG" },
+    { ava: "JC", cls: "c1", addr: "GBC...4F2A", time: "2 min ago", amt: "+2.5 XLM", flag: "PH" },
+    { ava: "AL", cls: "c2", addr: "GAX...9D1C", time: "11 min ago", amt: "+1.0 XLM", flag: "US" },
+    { ava: "MR", cls: "c3", addr: "GTP...2B7E", time: "28 min ago", amt: "+5.0 XLM", flag: "JP" },
+    { ava: "KN", cls: "c4", addr: "GDA...5C1F", time: "1 hr ago", amt: "+0.75 XLM", flag: "SG" },
   ];
 
 function useCountUp(target: number, duration = 2000) {
@@ -354,9 +353,8 @@ export default function HomePage({
             </h1>
 
             <p className="hero-sub">
-              TulongChain locks donor USDC in a Soroban smart contract escrow.
-              Funds only release when a verified coordinator declares a disaster
-              emergency - every centavo public and traceable on-chain in under 5 seconds.
+              Send XLM or USDC directly to the contract address. No forms, no intermediaries.
+              Every transaction is visible on Stellar Expert within seconds.
             </p>
 
             {!freighterInstalled && (
@@ -423,8 +421,8 @@ export default function HomePage({
               </div>
 
                <DonatedCounter />
-               <div className="fund-amount-unit">USDC raised</div>
-               <div className="fund-desc">Typhoon Relief Fund 2026</div>
+               <div className="fund-amount-unit">XLM & USDC received</div>
+               <div className="fund-desc">TulongChain Relief Fund — Testnet</div>
 
               <div className="progress-wrap">
                 <div className="progress-track">
@@ -432,10 +430,38 @@ export default function HomePage({
                     <div className="progress-shimmer" />
                   </div>
                 </div>
-                <div className="progress-labels">
-                  <span>0 USDC</span>
-                  <span className="progress-pct">70% of 12,000 goal</span>
-                </div>
+               <div className="progress-labels">
+                 <span>0 XLM</span>
+                 <span className="progress-pct">Testnet mode — view live transactions on Dashboard</span>
+               </div>
+
+               <div className="fund-card-cta">
+                 <p className="cta-text">
+                   {wallet.connected ? (
+                     <>
+                       You're connected.{' '}
+                       <button
+                         onClick={onEnter}
+                         style={{
+                           background: "none",
+                           border: "none",
+                           color: "var(--yellow)",
+                           textDecoration: "underline",
+                           cursor: "pointer",
+                           fontSize: "inherit"
+                         }}
+                       >
+                         Open Dashboard
+                       </button>{' '}
+                       to view live incoming payments and copy the contract address.
+                     </>
+                   ) : (
+                     <>
+                       Connect Freighter to get the donation address and monitor incoming XLM/USDC in real time.
+                     </>
+                   )}
+                 </p>
+               </div>
               </div>
 
               <div className="mini-feed-label">

@@ -4,30 +4,22 @@ import { useQuery, useMutation } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import StatsCard from "../components/StatsCard";
 import DonateForm from "../components/DonateForm";
-import WithdrawForm from "../components/WithdrawForm";
+import TransactionHistory from "../components/TransactionHistory";
 import ActivityFeed from "../components/ActivityFeed";
 import {
-  donate,
-  declareEmergency,
-  liftEmergency,
   getTotalDonated,
   getTotalWithdrawn,
   getBalance,
   isEmergency,
 } from "../lib/stellar";
-import { getNativeBalance, WrongNetworkError, AccountNotFundedError, verifyAccountReady } from "../lib/freighter";
+import { WrongNetworkError, AccountNotFundedError } from "../lib/freighter";
+import { CONFIG } from "../lib/config";
 import type { WalletState, FundStats } from "../types";
 
 interface Props {
   wallet: WalletState;
   onBack: () => void;
 }
-
-const QUICK_LINKS = [
-  { label: "Stellar Expert", href: "https://stellar.expert/explorer/testnet", icon: "search" },
-  { label: "Soroban SDK", href: "https://docs.rs/soroban-sdk", icon: "package" },
-  { label: "Freighter", href: "https://freighter.app", icon: "link" },
-];
 
 export default function DashboardPage({ wallet, onBack }: Props) {
   const [stats, setStats] = useState<FundStats>({
@@ -36,422 +28,138 @@ export default function DashboardPage({ wallet, onBack }: Props) {
     balance: 0,
     isEmergency: false,
   });
-  const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
-  const [tab, setTab] = useState<"donate" | "withdraw">("donate");
-  const [toast, setToast] = useState<{ type: "success" | "error" | "info"; msg: string } | null>(null);
   const [lastRefresh, setLastRefresh] = useState<Date>(new Date());
-  const [copiedAddr, setCopiedAddr] = useState(false);
-  const [xlmBalance, setXlmBalance] = useState<string | null>(null);
+  const [contractXlmBalance, setContractXlmBalance] = useState<string>("0");
 
   const activity = useQuery(api.fund.getActivityFeed);
-  const recordDonation = useMutation(api.fund.recordDonation);
-  const recordWithdrawal = useMutation(api.fund.recordWithdrawal);
-  const recordEmergency = useMutation(api.fund.recordEmergencyEvent);
-
-  function showToast(type: "success" | "error" | "info", msg: string) {
-    setToast({ type, msg });
-    setTimeout(() => setToast(null), 4000);
-  }
 
   const refreshStats = useCallback(async (silent = false) => {
     if (!silent) setRefreshing(true);
     try {
-      const [donated, withdrawn, balance, emergency, xlm] = await Promise.all([
+      const [donated, withdrawn, balance, emergency] = await Promise.all([
         getTotalDonated(!silent),
         getTotalWithdrawn(!silent),
         getBalance(!silent),
         isEmergency(!silent),
-        wallet.address ? getNativeBalance(wallet.address).catch(() => null) : Promise.resolve(null),
       ]);
       setStats({ totalDonated: donated, totalWithdrawn: withdrawn, balance, isEmergency: emergency });
-      setXlmBalance(xlm);
       setLastRefresh(new Date());
     } catch (err) {
-      if (err instanceof Error && (err.message.includes("network") || err.message.includes("testnet"))) {
-        showToast("error", "Please switch Freighter to Stellar Testnet");
-        return;
-      }
-      if (!silent) showToast("error", "Failed to load on-chain stats. Check your connection.");
       console.error("Failed to load stats:", err);
     } finally {
       setRefreshing(false);
     }
-  }, [wallet.address]);
+  }, []);
 
-  useEffect(() => {
+   useEffect(() => {
     refreshStats(true);
     const interval = setInterval(() => refreshStats(true), 30_000);
     return () => clearInterval(interval);
   }, [refreshStats]);
 
-   async function handleDonate(amount: number) {
-    if (!wallet.address) return;
-    
-    try {
-      await verifyAccountReady(wallet.address);
-    } catch (err: any) {
-      if (err instanceof WrongNetworkError) {
-        showToast("error", "Please switch Freighter to Stellar Testnet");
-        return;
+  // Fetch contract's native XLM balance from Horizon
+  useEffect(() => {
+    async function fetchXlmBalance() {
+      try {
+        const res = await fetch(`https://horizon-testnet.stellar.org/accounts/${CONFIG.contractId}`);
+        if (!res.ok) throw new Error(`Horizon error ${res.status}`);
+        const data = await res.json();
+        const native = data.balances?.find((b: any) => b.asset_type === "native");
+        setContractXlmBalance(native ? native.balance : "0");
+      } catch (err) {
+        console.error("Failed to fetch XLM balance:", err);
       }
-      if (err instanceof AccountNotFundedError) {
-        showToast("error", `Account not funded. Use Friendbot to get Testnet XLM`);
-        return;
-      }
-      showToast("error", err.message);
-      return;
     }
-
-    setLoading(true);
-    try {
-      const txHash = await donate(wallet.address, amount);
-      await recordDonation({ donor: wallet.address, amount, txHash });
-      await refreshStats(true);
-      showToast("success", `Successfully donated ${amount} USDC! Tx: ${txHash.slice(0, 8)}...`);
-    } catch (err: any) {
-      if (err.message.includes("network") || err.message.includes("testnet")) {
-        showToast("error", "Wrong network. Please switch Freighter to Testnet.");
-      } else {
-        showToast("error", "Donation failed: " + err.message);
-      }
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  async function handleWithdraw(amount: number, purpose: string) {
-    if (!wallet.address) return;
-    
-    try {
-      await verifyAccountReady(wallet.address);
-    } catch (err: any) {
-      if (err instanceof WrongNetworkError) {
-        showToast("error", "Please switch Freighter to Stellar Testnet");
-        return;
-      }
-      if (err instanceof AccountNotFundedError) {
-        showToast("error", `Account not funded. Use Friendbot to get Testnet XLM`);
-        return;
-      }
-      showToast("error", err.message);
-      return;
-    }
-
-    setLoading(true);
-    try {
-      await recordWithdrawal({ coordinator: wallet.address, amount, purpose });
-      await refreshStats(true);
-      showToast("success", `Withdrew ${amount} USDC. Purpose logged on-chain.`);
-    } catch (err: any) {
-      if (err.message.includes("network") || err.message.includes("testnet")) {
-        showToast("error", "Wrong network. Please switch Freighter to Testnet.");
-      } else {
-        showToast("error", "Withdrawal failed: " + err.message);
-      }
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  async function handleDeclareEmergency() {
-    if (!wallet.address) return;
-
-    try {
-      await verifyAccountReady(wallet.address);
-    } catch (err: any) {
-      if (err instanceof WrongNetworkError) {
-        showToast("error", "Please switch Freighter to Stellar Testnet");
-        return;
-      }
-      if (err instanceof AccountNotFundedError) {
-        showToast("error", `Account not funded. Use Friendbot to get Testnet XLM`);
-        return;
-      }
-      showToast("error", err.message);
-      return;
-    }
-
-    setLoading(true);
-    try {
-      await declareEmergency(wallet.address);
-      await recordEmergency({ type: "emergency_declared", address: wallet.address });
-      await refreshStats(true);
-      showToast("info", "Emergency declared. Withdrawals are now enabled.");
-    } catch (err: any) {
-      if (err.message.includes("network") || err.message.includes("testnet")) {
-        showToast("error", "Wrong network. Please switch Freighter to Testnet.");
-      } else {
-        showToast("error", "Failed: " + err.message);
-      }
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  async function handleLiftEmergency() {
-    if (!wallet.address) return;
-
-    try {
-      await verifyAccountReady(wallet.address);
-    } catch (err: any) {
-      if (err instanceof WrongNetworkError) {
-        showToast("error", "Please switch Freighter to Stellar Testnet");
-        return;
-      }
-      if (err instanceof AccountNotFundedError) {
-        showToast("error", `Account not funded. Use Friendbot to get Testnet XLM`);
-        return;
-      }
-      showToast("error", err.message);
-      return;
-    }
-
-    setLoading(true);
-    try {
-      await liftEmergency(wallet.address);
-      await recordEmergency({ type: "emergency_lifted", address: wallet.address });
-      await refreshStats(true);
-      showToast("success", "Emergency lifted. Fund returned to locked state.");
-    } catch (err: any) {
-      if (err.message.includes("network") || err.message.includes("testnet")) {
-        showToast("error", "Wrong network. Please switch Freighter to Testnet.");
-      } else {
-        showToast("error", "Failed: " + err.message);
-      }
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  function handleCopyAddr() {
-    if (wallet.address) {
-      navigator.clipboard.writeText(wallet.address);
-      setCopiedAddr(true);
-      setTimeout(() => setCopiedAddr(false), 1800);
-    }
-  }
-
-  const utilizationPct = stats.totalDonated > 0
-    ? Math.round((stats.totalWithdrawn / stats.totalDonated) * 100)
-    : 0;
-
-  const escrowPct = stats.totalDonated > 0
-    ? Math.round((stats.balance / stats.totalDonated) * 100)
-    : 0;
+    fetchXlmBalance();
+    const interval = setInterval(fetchXlmBalance, 15000);
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <div className="dashboard-page">
-      {toast && (
-        <div className={`toast toast-${toast.type}`}>
-          <span className="toast-msg">{toast.msg}</span>
-          <button className="toast-close" onClick={() => setToast(null)}>x</button>
+      <header className="dash-header">
+        <div className="dash-header-left">
+          <button className="btn-ghost" onClick={onBack}>
+            <span>&larr;</span> Home
+          </button>
+          <div className="dash-title-wrap">
+            <h1 className="dash-title">TulongChain Dashboard</h1>
+            <span className="dash-subtitle">Stellar Testnet — Live Monitoring</span>
+          </div>
         </div>
-      )}
+
+        <div className="dash-header-right">
+          <div className="wallet-info">
+            <div className="wallet-status">
+              <span className="wallet-dot" />
+              Connected
+            </div>
+            <span className="address-badge-btn">
+              {wallet.address?.slice(0, 8)}...{wallet.address?.slice(-6)}
+            </span>
+          </div>
+
+          <button
+            className={`refresh-btn ${refreshing ? "refreshing" : ""}`}
+            onClick={() => refreshStats(false)}
+            disabled={refreshing}
+            title="Refresh on-chain data"
+          >
+            R
+          </button>
+        </div>
+      </header>
 
       {stats.isEmergency && (
         <div className="emergency-banner">
           <span className="emergency-icon">!</span>
-          <strong>EMERGENCY ACTIVE</strong> - Relief fund withdrawals are enabled
-          <button
-            className="emergency-lift-btn"
-            onClick={handleLiftEmergency}
-            disabled={loading}
-          >
-            Lift Emergency
-          </button>
+          <strong>EMERGENCY ACTIVE</strong> — Withdrawals enabled
         </div>
       )}
 
       <div className="dashboard">
-        <header className="dash-header">
-          <div className="dash-header-left">
-            <button className="btn-ghost" onClick={onBack}>
-              <span>&larr;</span> Home
-            </button>
-            <div className="dash-title-wrap">
-              <h1 className="dash-title">TulongChain Dashboard</h1>
-              <span className="dash-subtitle">Stellar Testnet - Soroban Contract</span>
-            </div>
-          </div>
-
-          <div className="dash-header-right">
-            <div className="quick-links">
-              {QUICK_LINKS.map(({ label, href, icon }) => (
-                <a key={label} href={href} target="_blank" rel="noreferrer" className="quick-link">
-                  <span className={`icon-${icon}`}></span>
-                  <span className="quick-link-label">{label}</span>
-                </a>
-              ))}
-            </div>
-
-            <div className="wallet-info">
-              <div className="wallet-status">
-                <span className="wallet-dot" />
-                Connected
-              </div>
-              <button
-                className="address-badge-btn"
-                onClick={handleCopyAddr}
-                title="Click to copy full address"
-              >
-                {wallet.address?.slice(0, 8)}...{wallet.address?.slice(-6)}
-                <span className="copy-mini">{copiedAddr ? "OK" : "Copy"}</span>
-              </button>
-            </div>
-
-            <button
-              className={`refresh-btn ${refreshing ? "refreshing" : ""}`}
-              onClick={() => refreshStats(false)}
-              disabled={refreshing}
-              title="Refresh on-chain data"
-            >
-              R
-            </button>
-          </div>
-        </header>
-
         <div className="stats-section">
           <div className="stats-grid">
             <StatsCard
-              label="Total Donated"
+              label="Total Donated (USDC)"
               value={`${stats.totalDonated.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USDC`}
               icon="$"
               highlight={false}
             />
             <StatsCard
-              label="Total Withdrawn"
+              label="Total Withdrawn (USDC)"
               value={`${stats.totalWithdrawn.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USDC`}
               icon="out"
               highlight={false}
             />
             <StatsCard
-              label="Available Balance"
+              label="Available Balance (USDC)"
               value={`${stats.balance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USDC`}
               icon="bank"
               highlight={true}
             />
             <StatsCard
-              label="XLM Balance"
-              value={xlmBalance ? `${parseFloat(xlmBalance).toFixed(2)} XLM` : "Loading..."}
+              label="Contract XLM Balance"
+              value={`${parseFloat(contractXlmBalance).toLocaleString(undefined, { minimumFractionDigits: 4, maximumFractionDigits: 4 })} XLM`}
               icon="star"
               highlight={false}
             />
           </div>
-
-          <div className="analytics-bar">
-            <div className="analytics-item">
-              <span className="analytics-label">Fund utilization</span>
-              <div className="analytics-track">
-                <div className="analytics-fill analytics-fill-coral" style={{ width: `${utilizationPct}%` }} />
-              </div>
-              <span className="analytics-pct">{utilizationPct}%</span>
-            </div>
-            <div className="analytics-divider" />
-            <div className="analytics-item">
-              <span className="analytics-label">In escrow</span>
-              <div className="analytics-track">
-                <div className="analytics-fill analytics-fill-leaf" style={{ width: `${escrowPct}%` }} />
-              </div>
-              <span className="analytics-pct">{escrowPct}%</span>
-            </div>
-            <div className="analytics-divider" />
-            <div className="analytics-meta">
-              <span className="analytics-label">Last refreshed</span>
-              <span className="analytics-time">{lastRefresh.toLocaleTimeString()}</span>
-            </div>
-          </div>
         </div>
 
-        <div className="actions-panel">
-          <div className="tabs-wrap">
-            <div className="tabs-header">
-                <button
-                  className={`tab-btn ${tab === "donate" ? "tab-btn-active" : ""}`}
-                  onClick={() => setTab("donate")}
-                >
-                  <span className="tab-icon">$</span>
-                  Donate USDC
-                </button>
-              <button
-                className={`tab-btn ${tab === "withdraw" ? "tab-btn-active" : ""}`}
-                onClick={() => setTab("withdraw")}
-              >
-                <span className="tab-icon">K</span>
-                Admin - Withdraw
-              </button>
-            </div>
+        <div className="donate-section">
+          <DonateForm wallet={wallet} />
+        </div>
 
-            <div className="tab-body">
-              {tab === "donate" && (
-                <>
-                   <div className="panel-info">
-                     <span className="panel-info-icon">i</span>
-                     Funds are locked in the Soroban escrow contract until an emergency is declared. All transactions are recorded on-chain and publicly verifiable.
-                   </div>
-                  <DonateForm onDonate={handleDonate} loading={loading} />
-                </>
-              )}
-              {tab === "withdraw" && (
-                <>
-                  <div className="panel-info panel-info-warn">
-                    <span className="panel-info-icon">!</span>
-                    Admin-only. Withdrawals require an active emergency declaration. Purpose is logged immutably on-chain.
-                  </div>
-                  <WithdrawForm
-                    onWithdraw={handleWithdraw}
-                    onDeclareEmergency={handleDeclareEmergency}
-                    isEmergency={stats.isEmergency}
-                    loading={loading}
-                  />
-                </>
-              )}
-            </div>
-          </div>
-
-          <div className="contract-state-panel">
-            <div className="csp-title">Contract State</div>
-            <div className="csp-rows">
-              <div className="csp-row">
-                <span className="csp-key">Network</span>
-                <span className="csp-val csp-network">Stellar Testnet (Enforced)</span>
-              </div>
-              <div className="csp-row">
-                <span className="csp-key">Emergency</span>
-                <span className={`csp-val ${stats.isEmergency ? "csp-emergency" : "csp-normal"}`}>
-                  {stats.isEmergency ? "Active" : "Inactive"}
-                </span>
-              </div>
-              <div className="csp-row">
-                <span className="csp-key">Withdrawals</span>
-                <span className={`csp-val ${stats.isEmergency ? "csp-enabled" : "csp-locked"}`}>
-                  {stats.isEmergency ? "Enabled" : "Locked"}
-                </span>
-              </div>
-               <div className="csp-row">
-                 <span className="csp-key">Token</span>
-                 <span className="csp-val">USDC (SEP-41)</span>
-               </div>
-              <div className="csp-row">
-                <span className="csp-key">Standard</span>
-                <span className="csp-val">Soroban - Rust</span>
-              </div>
-            </div>
-            <a
-              href="https://stellar.expert/explorer/testnet"
-              target="_blank"
-              rel="noreferrer"
-              className="csp-explorer-btn"
-            >
-              View on Explorer -&gt;
-            </a>
-          </div>
+        <div className="history-section">
+          <TransactionHistory />
         </div>
 
         <div className="activity-section">
           <div className="activity-header">
             <div className="activity-title">
-              <span>A</span> Activity Feed
+              <span>A</span> Contract Activity
             </div>
             <div className="activity-count">
               {activity?.length ?? 0} events
@@ -461,8 +169,8 @@ export default function DashboardPage({ wallet, onBack }: Props) {
         </div>
 
         <div className="dash-footer">
-          <span>TulongChain - Stellar Philippines 2026</span>
-          <span className="dash-footer-note">All transactions are recorded on the Stellar blockchain and cannot be modified.</span>
+          <span>TulongChain — Stellar Testnet</span>
+          <span className="dash-footer-note">All transactions are recorded on-chain and publicly verifiable.</span>
         </div>
       </div>
     </div>

@@ -2954,6 +2954,223 @@ body::before {
 }
 
 .theme-toggle:hover {
-    transform: translate(-1px, -1px);
-    box-shadow: 3px 3px 0 var(--black-4);
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0 var(--black-4);
+}
+
+/* ── DONATE FORM (Simplified) ───────────────────────────────────── */
+
+.donate-simple {
+  background: var(--surface);
+  border: 2px solid var(--black);
+  border-radius: var(--r-md);
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.donate-prompt {
+  color: var(--muted);
+  text-align: center;
+  font-size: 0.9rem;
+}
+
+.address-box {
+  background: var(--off-white);
+  border: 2px dashed var(--black-4);
+  border-radius: var(--r-sm);
+  padding: 0.75rem;
+  cursor: pointer;
+  text-align: center;
+  transition: border-color var(--t-fast);
+  word-break: break-all;
+}
+.address-box:hover {
+  border-color: var(--yellow);
+}
+.address-label {
+  display: block;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 0.25rem;
+}
+.address-value {
+  display: block;
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  color: var(--black);
+  margin-bottom: 0.25rem;
+}
+.copy-status {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--green);
+  opacity: 0;
+  transition: opacity var(--t-fast);
+}
+.copy-status[style*="opacity: 1"],
+.copy-status:contains("Copied") {
+  opacity: 1;
+}
+
+.donate-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-top: 0.25rem;
+}
+.step-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8rem;
+}
+.step-num-mini {
+  background: var(--black);
+  color: var(--white);
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.65rem;
+  font-weight: 700;
+}
+
+/* ── TRANSACTION HISTORY ─────────────────────────────────────────── */
+
+.transaction-history {
+  background: var(--surface);
+  border: 2px solid var(--black);
+  border-radius: var(--r-md);
+  padding: 1rem;
+  margin-top: 1rem;
+}
+
+.history-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--black);
+}
+
+.history-title {
+  font-weight: 800;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.history-badge {
+  background: var(--yellow);
+  color: var(--black);
+  padding: 0.15rem 0.5rem;
+  border-radius: var(--r-pill);
+  font-size: 0.65rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.history-loading,
+.history-error,
+.history-empty {
+  text-align: center;
+  color: var(--muted);
+  padding: 1rem;
+  font-size: 0.8rem;
+}
+
+.history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.history-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem;
+  background: var(--off-white);
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  font-size: 0.8rem;
+}
+
+.history-amount {
+  display: flex;
+  flex-direction: column;
+}
+
+.amt-val {
+  font-family: var(--mono);
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.amt-asset {
+  font-size: 0.65rem;
+  color: var(--muted);
+}
+
+.history-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  font-size: 0.7rem;
+  color: var(--muted);
+}
+
+.meta-from {
+  font-family: var(--mono);
+}
+
+.history-explorer {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--green);
+  text-decoration: none;
+  padding: 0.25rem 0.5rem;
+  border: 1px solid var(--green);
+  border-radius: var(--r-xs);
+  transition: all var(--t-fast);
+}
+.history-explorer:hover {
+  background: var(--green);
+  color: var(--white);
+}
+
+/* ── FUND CARD CTA ───────────────────────────────────────────────── */
+
+.fund-card-cta {
+  padding: 0.75rem 1rem;
+  margin-top: 0.5rem;
+  background: var(--yellow-light);
+  border: 2px solid var(--yellow-2);
+  border-radius: var(--r-sm);
+  text-align: center;
+}
+
+.cta-text {
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.link-btn {
+  background: none;
+  border: none;
+  color: var(--black);
+  text-decoration: underline;
+  font-weight: 800;
+  cursor: pointer;
+  font-size: inherit;
+  padding: 0;
 }

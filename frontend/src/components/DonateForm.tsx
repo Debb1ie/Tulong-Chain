@@ -3,68 +3,61 @@ import { useState } from "react";
 import { CONFIG } from "../lib/config";
 
 interface Props {
-  onDonate: (amount: number) => void;
-  loading: boolean;
+  wallet: {
+    connected: boolean;
+    address: string | null;
+  };
 }
 
-const QUICK_AMOUNTS = [10, 25, 50, 100];
+export default function DonateForm({ wallet }: Props) {
+  const [copied, setCopied] = useState(false);
 
-export default function DonateForm({ onDonate, loading }: Props) {
-  const [amount, setAmount] = useState("");
+  function copyAddress() {
+    navigator.clipboard.writeText(CONFIG.contractId);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  }
 
-  function handleSubmit() {
-    const val = parseFloat(amount);
-    if (isNaN(val) || val <= 0) {
-      alert("Please enter a valid amount.");
-      return;
-    }
-    onDonate(val);
-    setAmount("");
+  if (!wallet.connected) {
+    return (
+      <div className="donate-simple">
+        <p className="donate-prompt">
+          Connect your Freighter wallet to get started.
+        </p>
+      </div>
+    );
   }
 
   return (
-    <div>
-      <h3 className="form-h3">Donate USDC to the Relief Fund</h3>
+    <div className="donate-simple">
+      <h3 className="form-h3">Send XLM or USDC to the Fund</h3>
       <p className="form-desc">
-        Your USDC will be locked in the Soroban escrow contract until an emergency is declared.
-        Every centavo is traceable on-chain.
-      </p>
-      <p className="form-desc" style={{ fontSize: "0.75rem", color: "var(--muted)", marginTop: "-0.5rem", marginBottom: "1rem" }}>
-        Donation contract address: <span style={{ fontFamily: "monospace", color: "var(--yellow)", wordBreak: "break-all" }}>
-          {CONFIG.contractId}
-        </span>
+        Copy the contract address below and send any amount directly from your Freighter wallet.
+        Transactions are detected automatically.
       </p>
 
-      <div className="quick-amounts">
-        {QUICK_AMOUNTS.map((a) => (
-          <button key={a} className="quick-btn" onClick={() => setAmount(String(a))}>
-            ${a}
-          </button>
-        ))}
-      </div>
+       <div className="address-box" onClick={copyAddress}>
+         <span className="address-label">Donation Address (Tap to copy)</span>
+         <span className="address-value">{CONFIG.contractId}</span>
+         <span className="copy-status" style={{ opacity: copied ? 1 : 0.5 }}>
+           {copied ? "Copied!" : "Copy"}
+         </span>
+       </div>
 
-      <div className="input-row">
-        <input
-          type="number"
-          placeholder="Enter USDC amount"
-          value={amount}
-          onChange={(e) => setAmount(e.target.value)}
-          min="0.01"
-          step="0.01"
-        />
-        <span className="input-unit">USDC</span>
+      <div className="donate-steps">
+        <div className="step-item">
+          <span className="step-num-mini">1</span>
+          <span>Open Freighter wallet (Testnet)</span>
+        </div>
+        <div className="step-item">
+          <span className="step-num-mini">2</span>
+          <span>Send XLM or USDC to the address above</span>
+        </div>
+        <div className="step-item">
+          <span className="step-num-mini">3</span>
+          <span>Your donation appears below automatically</span>
+        </div>
       </div>
-
-      <button className="btn-primary" onClick={handleSubmit} disabled={loading}>
-         {loading ? (
-           <>
-             <span className="spinner"></span>
-             Processing...
-           </>
-         ) : (
-           "Donate USDC via Freighter"
-         )}
-      </button>
     </div>
   );
 }
