@@ -133,6 +133,18 @@ export async function donate(
   return txHash;
 }
 
+/** Donate native XLM to the escrow contract */
+export async function donateXlm(
+  callerAddress: string,
+  amountXlm: number
+): Promise<string> {
+  const { txHash } = await invokeContract(callerAddress, "donate_xlm", [
+    new Address(callerAddress).toScVal(),
+    nativeToScVal(amountXlm, { type: "i128" }),
+  ]);
+  return txHash;
+}
+
 export async function declareEmergency(callerAddress: string): Promise<void> {
   await invokeContract(callerAddress, "declare_emergency", []);
 }
