@@ -110,6 +110,38 @@ impl TulongChain {
             .set(&DataKey::EmergencyTimelockSeconds, &seconds);
     }
 
+    /// Get current admin address
+    pub fn get_admin(env: Env) -> Address {
+        env.storage().instance().get(&DataKey::Admin).unwrap()
+    }
+
+    /// Transfer contract ownership to new admin
+    pub fn transfer_ownership(env: Env, new_admin: Address) {
+        let current_admin: Address = env.storage().instance().get(&DataKey::Admin).unwrap();
+        current_admin.require_auth();
+        env.storage().instance().set(&DataKey::Admin, &new_admin);
+        env.events().publish(
+            (Symbol::new(&env, "ownership_transferred"),),
+            (current_admin, new_admin),
+        );
+    }
+
+    /// Get current admin address
+    pub fn get_admin(env: Env) -> Address {
+        env.storage().instance().get(&DataKey::Admin).unwrap()
+    }
+
+    /// Transfer contract ownership to new admin
+    pub fn transfer_ownership(env: Env, new_admin: Address) {
+        let current_admin: Address = env.storage().instance().get(&DataKey::Admin).unwrap();
+        current_admin.require_auth();
+        env.storage().instance().set(&DataKey::Admin, &new_admin);
+        env.events().publish(
+            (Symbol::new(&env, "ownership_transferred"),),
+            (current_admin, new_admin),
+        );
+    }
+
     pub fn get_timelock_duration(env: Env) -> u64 {
         env.storage()
             .instance()
