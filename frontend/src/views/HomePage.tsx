@@ -36,40 +36,40 @@ const IMPACT_STATS = [
   { value: "Infinite", label: "On-chain forever", note: "Immutable audit trail" },
 ];
 
-const HOW_IT_WORKS = [
-  {
-    step: "01",
-    icon: "L",
-    color: "coral",
-    title: "Connect wallet",
-    body: "Open Freighter set to Testnet. Your Stellar address appears instantly - zero signup, zero email, zero gatekeeping.",
-    fn: null,
-  },
-  {
-    step: "02",
-    icon: "$",
-    color: "sun",
-    title: "Donate USDC",
-    body: "Enter any amount. Freighter signs in one click. USDC locks into the Soroban escrow contract. No intermediary touches it.",
-    fn: "donate(donor, token, amount)",
-  },
-  {
-    step: "03",
-    icon: "!",
-    color: "leaf",
-    title: "Declare emergency",
-    body: "Admin wallet flips the on-chain flag. The contract now permits withdrawals. The event is public, timestamped, immutable.",
-    fn: "declare_emergency()",
-  },
-  {
-    step: "04",
-    icon: "OK",
-    color: "sky",
-    title: "Release funds",
-    body: "Coordinator withdraws USDC with a purpose string. Logged on-chain permanently. Every centavo traceable by anyone, forever.",
-    fn: "withdraw(coordinator, token, amount, purpose)",
-  },
-];
+  const HOW_IT_WORKS = [
+    {
+      step: "01",
+      icon: "L",
+      color: "coral",
+      title: "Connect wallet",
+      body: "Open Freighter set to Testnet. Your Stellar address appears instantly - zero signup, zero email, zero gatekeeping.",
+      fn: null,
+    },
+    {
+      step: "02",
+      icon: "L",
+      color: "sun",
+      title: "Donate XLM",
+      body: "Enter any amount. Freighter signs in one click. XLM goes directly to the Soroban escrow contract on-chain. No intermediary touches it.",
+      fn: "payment(contract, amount)",
+    },
+    {
+      step: "03",
+      icon: "!",
+      color: "leaf",
+      title: "Declare emergency",
+      body: "Admin wallet flips the on-chain flag. The contract now permits withdrawals. The event is public, timestamped, immutable.",
+      fn: "declare_emergency()",
+    },
+    {
+      step: "04",
+      icon: "OK",
+      color: "sky",
+      title: "Release funds",
+      body: "Coordinator withdraws assets with a purpose string. Logged on-chain permanently. Every centavo traceable by anyone, forever.",
+      fn: "withdraw(coordinator, token, amount, purpose)",
+    },
+  ];
 
 const CONTRACT_FNS = [
   {
@@ -137,12 +137,12 @@ const WHY_STELLAR = [
   },
 ];
 
-const RECENT_DONATIONS = [
-  { ava: "JC", cls: "c1", addr: "GBC...4F2A", time: "2 min ago", amt: "+250 USDC", flag: "PH" },
-  { ava: "AL", cls: "c2", addr: "GAX...9D1C", time: "11 min ago", amt: "+100 USDC", flag: "US" },
-  { ava: "MR", cls: "c3", addr: "GTP...2B7E", time: "28 min ago", amt: "+500 USDC", flag: "JP" },
-  { ava: "KN", cls: "c4", addr: "GDA...5C1F", time: "1 hr ago", amt: "+75 USDC", flag: "SG" },
-];
+  const RECENT_DONATIONS = [
+    { ava: "JC", cls: "c1", addr: "GBC...4F2A", time: "2 min ago", amt: "+250 XLM", flag: "PH" },
+    { ava: "AL", cls: "c2", addr: "GAX...9D1C", time: "11 min ago", amt: "+100 XLM", flag: "US" },
+    { ava: "MR", cls: "c3", addr: "GTP...2B7E", time: "28 min ago", amt: "+500 XLM", flag: "JP" },
+    { ava: "KN", cls: "c4", addr: "GDA...5C1F", time: "1 hr ago", amt: "+75 XLM", flag: "SG" },
+  ];
 
 function useCountUp(target: number, duration = 2000) {
   const [count, setCount] = useState(0);
@@ -354,7 +354,7 @@ export default function HomePage({
             </h1>
 
             <p className="hero-sub">
-              TulongChain locks donor USDC in a Soroban smart contract escrow.
+              TulongChain locks donor XLM in a Soroban smart contract escrow.
               Funds only release when a verified coordinator declares a disaster
               emergency - every centavo public and traceable on-chain in under 5 seconds.
             </p>
@@ -422,9 +422,9 @@ export default function HomePage({
                 </div>
               </div>
 
-              <DonatedCounter />
-              <div className="fund-amount-unit">USDC raised</div>
-              <div className="fund-desc">Typhoon Relief Fund 2026</div>
+               <DonatedCounter />
+               <div className="fund-amount-unit">XLM raised</div>
+               <div className="fund-desc">Typhoon Relief Fund 2026</div>
 
               <div className="progress-wrap">
                 <div className="progress-track">
@@ -433,7 +433,7 @@ export default function HomePage({
                   </div>
                 </div>
                 <div className="progress-labels">
-                  <span>0 USDC</span>
+                  <span>0 XLM</span>
                   <span className="progress-pct">70% of 12,000 goal</span>
                 </div>
               </div>
@@ -462,18 +462,18 @@ export default function HomePage({
                   <p style={{ fontSize: "0.7rem", fontWeight: 700, color: "var(--muted)", marginBottom: "0.5rem", textTransform: "uppercase", letterSpacing: "0.05em" }}>
                     Quick Donate
                   </p>
-                  <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
-                    {[25, 50, 100, 250].map((amt) => (
-                      <button
-                        key={amt}
-                        className="btn-primary"
-                        style={{ padding: "0.5rem 0.75rem", fontSize: "0.8rem", flex: 1, minWidth: "70px" }}
-                        onClick={handleQuickDonate}
-                      >
-                        ${amt}
-                      </button>
-                    ))}
-                  </div>
+                   <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
+                     {[25, 50, 100, 250].map((amt) => (
+                       <button
+                         key={amt}
+                         className="btn-primary"
+                         style={{ padding: "0.5rem 0.75rem", fontSize: "0.8rem", flex: 1, minWidth: "70px" }}
+                         onClick={handleQuickDonate}
+                       >
+                         {amt} XLM
+                       </button>
+                     ))}
+                   </div>
                   <p style={{ fontSize: "0.65rem", color: "var(--muted)", marginTop: "0.5rem", textAlign: "center" }}>
                     Opens dashboard to complete donation via Freighter
                   </p>

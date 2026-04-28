@@ -6,15 +6,15 @@ import StatsCard from "../components/StatsCard";
 import DonateForm from "../components/DonateForm";
 import WithdrawForm from "../components/WithdrawForm";
 import ActivityFeed from "../components/ActivityFeed";
-import {
-  donate,
-  declareEmergency,
-  liftEmergency,
-  getTotalDonated,
-  getTotalWithdrawn,
-  getBalance,
-  isEmergency,
-} from "../lib/stellar";
+ import {
+   donateXLM,
+   declareEmergency,
+   liftEmergency,
+   getTotalDonated,
+   getTotalWithdrawn,
+   getBalance,
+   isEmergency,
+ } from "../lib/stellar";
 import { getNativeBalance, WrongNetworkError, AccountNotFundedError, verifyAccountReady } from "../lib/freighter";
 import type { WalletState, FundStats } from "../types";
 
@@ -87,7 +87,7 @@ export default function DashboardPage({ wallet, onBack }: Props) {
 
   async function handleDonate(amount: number) {
     if (!wallet.address) return;
-    
+
     try {
       await verifyAccountReady(wallet.address);
     } catch (err: any) {
@@ -105,10 +105,10 @@ export default function DashboardPage({ wallet, onBack }: Props) {
 
     setLoading(true);
     try {
-      await donate(wallet.address, amount);
-      await recordDonation({ donor: wallet.address, amount });
+      const txHash = await donateXLM(wallet.address, amount);
+      await recordDonation({ donor: wallet.address, amount, txHash });
       await refreshStats(true);
-      showToast("success", `Successfully donated ${amount} USDC! Transaction is on-chain.`);
+      showToast("success", `Successfully donated ${amount} XLM! Tx: ${txHash.slice(0, 8)}...`);
     } catch (err: any) {
       if (err.message.includes("network") || err.message.includes("testnet")) {
         showToast("error", "Wrong network. Please switch Freighter to Testnet.");
@@ -118,7 +118,7 @@ export default function DashboardPage({ wallet, onBack }: Props) {
     } finally {
       setLoading(false);
     }
-  }
+   }
 
   async function handleWithdraw(amount: number, purpose: string) {
     if (!wallet.address) return;
@@ -314,19 +314,19 @@ export default function DashboardPage({ wallet, onBack }: Props) {
         <div className="stats-section">
           <div className="stats-grid">
             <StatsCard
-              label="Total Donated"
+              label="USDC Donated"
               value={`${stats.totalDonated.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USDC`}
               icon="$"
               highlight={false}
             />
             <StatsCard
-              label="Total Withdrawn"
+              label="USDC Withdrawn"
               value={`${stats.totalWithdrawn.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USDC`}
               icon="out"
               highlight={false}
             />
             <StatsCard
-              label="Available Balance"
+              label="USDC in Escrow"
               value={`${stats.balance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USDC`}
               icon="bank"
               highlight={true}
@@ -341,7 +341,7 @@ export default function DashboardPage({ wallet, onBack }: Props) {
 
           <div className="analytics-bar">
             <div className="analytics-item">
-              <span className="analytics-label">Fund utilization</span>
+              <span className="analytics-label">USDC Utilization</span>
               <div className="analytics-track">
                 <div className="analytics-fill analytics-fill-coral" style={{ width: `${utilizationPct}%` }} />
               </div>
@@ -349,7 +349,7 @@ export default function DashboardPage({ wallet, onBack }: Props) {
             </div>
             <div className="analytics-divider" />
             <div className="analytics-item">
-              <span className="analytics-label">In escrow</span>
+              <span className="analytics-label">USDC in Escrow</span>
               <div className="analytics-track">
                 <div className="analytics-fill analytics-fill-leaf" style={{ width: `${escrowPct}%` }} />
               </div>
@@ -366,13 +366,13 @@ export default function DashboardPage({ wallet, onBack }: Props) {
         <div className="actions-panel">
           <div className="tabs-wrap">
             <div className="tabs-header">
-              <button
-                className={`tab-btn ${tab === "donate" ? "tab-btn-active" : ""}`}
-                onClick={() => setTab("donate")}
-              >
-                <span className="tab-icon">$</span>
-                Donate USDC
-              </button>
+                <button
+                  className={`tab-btn ${tab === "donate" ? "tab-btn-active" : ""}`}
+                  onClick={() => setTab("donate")}
+                >
+                  <span className="tab-icon">$</span>
+                  Donate XLM
+                </button>
               <button
                 className={`tab-btn ${tab === "withdraw" ? "tab-btn-active" : ""}`}
                 onClick={() => setTab("withdraw")}
@@ -385,10 +385,11 @@ export default function DashboardPage({ wallet, onBack }: Props) {
             <div className="tab-body">
               {tab === "donate" && (
                 <>
-                  <div className="panel-info">
-                    <span className="panel-info-icon">i</span>
-                    Funds are locked in the Soroban escrow contract until an emergency is declared by the admin. All transactions are recorded on-chain.
-                  </div>
+                   <div className="panel-info">
+                     <span className="panel-info-icon">i</span>
+                     XLM donations are sent directly to the Soroban escrow contract on Stellar Testnet.
+                     All transactions are recorded on-chain and publicly verifiable.
+                   </div>
                   <DonateForm onDonate={handleDonate} loading={loading} />
                 </>
               )}
@@ -428,10 +429,10 @@ export default function DashboardPage({ wallet, onBack }: Props) {
                   {stats.isEmergency ? "Enabled" : "Locked"}
                 </span>
               </div>
-              <div className="csp-row">
-                <span className="csp-key">Token</span>
-                <span className="csp-val">USDC (SEP-41)</span>
-              </div>
+               <div className="csp-row">
+                 <span className="csp-key">Token</span>
+                 <span className="csp-val">XLM (Native)</span>
+               </div>
               <div className="csp-row">
                 <span className="csp-key">Standard</span>
                 <span className="csp-val">Soroban - Rust</span>
