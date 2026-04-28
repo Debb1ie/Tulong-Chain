@@ -31,67 +31,55 @@ History updates instantly. Refresh page — history persists.
 
 ---
 
-## Option 2: Redeploy Contract with XLM Support (~10 min)
+## Option 2: Redeploy Contract with XLM Support (~5 min)
 
-If you prefer to donate native XLM (no trustline needed), follow these steps to update the live contract:
+**Quick Deploy Script**: `scripts/deploy-contract.js` automates everything.
 
-### Step 1 — Build WASM
-
-```bash
-cd C:\TulongChain\tulongchain\contracts
-cargo build --target wasm32-unknown-unknown --release
-```
-
-WASM file: `target/wasm32-unknown-unknown/release/tulong_chain.wasm`
-
-### Step 2 — Deploy to Testnet
+### One-Command Deploy
 
 ```bash
-# Use your existing key or generate new
-stellar keys generate deployer --global
-
-# Fund it (if not already)
-curl "https://friendbot.stellar.org?account=$(stellar keys address deployer)"
-
-# Deploy
-stellar contract deploy \
-  --wasm target/wasm32-unknown-unknown/release/tulong_chain.wasm \
-  --source deployer \
-  --network testnet
+cd C:\TulongChain\tulongchain
+node scripts/deploy-contract.js
 ```
 
-**Copy the new Contract ID** returned (looks like `C...`).
+What it does:
+1. Builds WASM (`cargo build --target wasm32-unknown-unknown --release`)
+2. Generates/uses `deployer` key
+3. Funds it via Friendbot
+4. Deploys contract to testnet
+5. Initializes with deployer as admin
+6. Prints the new `Contract ID`
 
-### Step 3 — Initialize Contract
-
-```bash
-stellar contract invoke \
-  --id <NEW_CONTRACT_ID> \
-  --source deployer \
-  --network testnet \
-  -- initialize \
-  --admin $(stellar keys address deployer)
-```
-
-### Step 4 — Update Frontend Config
+### Update Frontend
 
 Edit `frontend/.env`:
 
 ```
-VITE_CONTRACT_ID=<NEW_CONTRACT_ID>
+VITE_CONTRACT_ID=<PASTE_NEW_CONTRACT_ID_HERE>
 ```
 
-Save file. Restart frontend if running: `Ctrl+C` then `npm run dev`.
+Save and restart frontend if running.
 
-### Step 5 — Test XLM Donation
+### Test XLM Donation
 
 1. Dashboard → select **XLM** tab
-2. Choose amount (e.g., 0.1 XLM)
+2. Choose `0.1` XLM
 3. Click **Donate 0.1 XLM**
 4. Freighter popup → Approve
-5. ✅ Success! Transaction appears in history.
+5. ✅ Success! Transaction appears in history below within 5-10s
+6. Refresh page — donation persists
 
-Refresh page — history stays (read from chain).
+---
+
+## What Changed
+
+The new contract includes `donate_xlm( donor, amount )` which:
+- Accepts native XLM transfer from donor to contract
+- Records donation with `AssetType::Xlm`
+- Emits `donated_xlm` event
+- Stats (`get_total_donated()`) include both USDC and XLM combined
+
+Your previous USDC donations on the old contract remain on-chain but won't carry over to the new contract (fresh start).
 
 ---
 
