@@ -15,6 +15,7 @@ import {
   getBalance,
   isEmergency,
 } from "../lib/stellar";
+import { getNativeBalance, WrongNetworkError, AccountNotFundedError, verifyAccountReady } from "../lib/freighter";
 import type { WalletState, FundStats } from "../types";
 
 interface Props {
@@ -41,6 +42,7 @@ export default function DashboardPage({ wallet, onBack }: Props) {
   const [toast, setToast] = useState<{ type: "success" | "error" | "info"; msg: string } | null>(null);
   const [lastRefresh, setLastRefresh] = useState<Date>(new Date());
   const [copiedAddr, setCopiedAddr] = useState(false);
+  const [xlmBalance, setXlmBalance] = useState<string | null>(null);
 
   const activity = useQuery(api.fund.getActivityFeed);
   const recordDonation = useMutation(api.fund.recordDonation);
@@ -55,21 +57,27 @@ export default function DashboardPage({ wallet, onBack }: Props) {
   const refreshStats = useCallback(async (silent = false) => {
     if (!silent) setRefreshing(true);
     try {
-      const [donated, withdrawn, balance, emergency] = await Promise.all([
+      const [donated, withdrawn, balance, emergency, xlm] = await Promise.all([
         getTotalDonated(!silent),
         getTotalWithdrawn(!silent),
         getBalance(!silent),
         isEmergency(!silent),
+        wallet.address ? getNativeBalance(wallet.address).catch(() => null) : Promise.resolve(null),
       ]);
       setStats({ totalDonated: donated, totalWithdrawn: withdrawn, balance, isEmergency: emergency });
+      setXlmBalance(xlm);
       setLastRefresh(new Date());
     } catch (err) {
-      console.error("Failed to load stats:", err);
+      if (err instanceof Error && (err.message.includes("network") || err.message.includes("testnet"))) {
+        showToast("error", "Please switch Freighter to Stellar Testnet");
+        return;
+      }
       if (!silent) showToast("error", "Failed to load on-chain stats. Check your connection.");
+      console.error("Failed to load stats:", err);
     } finally {
       setRefreshing(false);
     }
-  }, []);
+  }, [wallet.address]);
 
   useEffect(() => {
     refreshStats(true);
@@ -79,14 +87,34 @@ export default function DashboardPage({ wallet, onBack }: Props) {
 
   async function handleDonate(amount: number) {
     if (!wallet.address) return;
+    
+    try {
+      await verifyAccountReady(wallet.address);
+    } catch (err: any) {
+      if (err instanceof WrongNetworkError) {
+        showToast("error", "Please switch Freighter to Stellar Testnet");
+        return;
+      }
+      if (err instanceof AccountNotFundedError) {
+        showToast("error", `Account not funded. Use Friendbot to get Testnet XLM`);
+        return;
+      }
+      showToast("error", err.message);
+      return;
+    }
+
     setLoading(true);
     try {
       await donate(wallet.address, amount);
       await recordDonation({ donor: wallet.address, amount });
       await refreshStats(true);
       showToast("success", `Successfully donated ${amount} USDC! Transaction is on-chain.`);
-    } catch (err) {
-      showToast("error", "Donation failed: " + (err as Error).message);
+    } catch (err: any) {
+      if (err.message.includes("network") || err.message.includes("testnet")) {
+        showToast("error", "Wrong network. Please switch Freighter to Testnet.");
+      } else {
+        showToast("error", "Donation failed: " + err.message);
+      }
     } finally {
       setLoading(false);
     }
@@ -94,13 +122,33 @@ export default function DashboardPage({ wallet, onBack }: Props) {
 
   async function handleWithdraw(amount: number, purpose: string) {
     if (!wallet.address) return;
+    
+    try {
+      await verifyAccountReady(wallet.address);
+    } catch (err: any) {
+      if (err instanceof WrongNetworkError) {
+        showToast("error", "Please switch Freighter to Stellar Testnet");
+        return;
+      }
+      if (err instanceof AccountNotFundedError) {
+        showToast("error", `Account not funded. Use Friendbot to get Testnet XLM`);
+        return;
+      }
+      showToast("error", err.message);
+      return;
+    }
+
     setLoading(true);
     try {
       await recordWithdrawal({ coordinator: wallet.address, amount, purpose });
       await refreshStats(true);
       showToast("success", `Withdrew ${amount} USDC. Purpose logged on-chain.`);
-    } catch (err) {
-      showToast("error", "Withdrawal failed: " + (err as Error).message);
+    } catch (err: any) {
+      if (err.message.includes("network") || err.message.includes("testnet")) {
+        showToast("error", "Wrong network. Please switch Freighter to Testnet.");
+      } else {
+        showToast("error", "Withdrawal failed: " + err.message);
+      }
     } finally {
       setLoading(false);
     }
@@ -108,14 +156,34 @@ export default function DashboardPage({ wallet, onBack }: Props) {
 
   async function handleDeclareEmergency() {
     if (!wallet.address) return;
+
+    try {
+      await verifyAccountReady(wallet.address);
+    } catch (err: any) {
+      if (err instanceof WrongNetworkError) {
+        showToast("error", "Please switch Freighter to Stellar Testnet");
+        return;
+      }
+      if (err instanceof AccountNotFundedError) {
+        showToast("error", `Account not funded. Use Friendbot to get Testnet XLM`);
+        return;
+      }
+      showToast("error", err.message);
+      return;
+    }
+
     setLoading(true);
     try {
       await declareEmergency(wallet.address);
       await recordEmergency({ type: "emergency_declared", address: wallet.address });
       await refreshStats(true);
       showToast("info", "Emergency declared. Withdrawals are now enabled.");
-    } catch (err) {
-      showToast("error", "Failed: " + (err as Error).message);
+    } catch (err: any) {
+      if (err.message.includes("network") || err.message.includes("testnet")) {
+        showToast("error", "Wrong network. Please switch Freighter to Testnet.");
+      } else {
+        showToast("error", "Failed: " + err.message);
+      }
     } finally {
       setLoading(false);
     }
@@ -123,14 +191,34 @@ export default function DashboardPage({ wallet, onBack }: Props) {
 
   async function handleLiftEmergency() {
     if (!wallet.address) return;
+
+    try {
+      await verifyAccountReady(wallet.address);
+    } catch (err: any) {
+      if (err instanceof WrongNetworkError) {
+        showToast("error", "Please switch Freighter to Stellar Testnet");
+        return;
+      }
+      if (err instanceof AccountNotFundedError) {
+        showToast("error", `Account not funded. Use Friendbot to get Testnet XLM`);
+        return;
+      }
+      showToast("error", err.message);
+      return;
+    }
+
     setLoading(true);
     try {
       await liftEmergency(wallet.address);
       await recordEmergency({ type: "emergency_lifted", address: wallet.address });
       await refreshStats(true);
       showToast("success", "Emergency lifted. Fund returned to locked state.");
-    } catch (err) {
-      showToast("error", "Failed: " + (err as Error).message);
+    } catch (err: any) {
+      if (err.message.includes("network") || err.message.includes("testnet")) {
+        showToast("error", "Wrong network. Please switch Freighter to Testnet.");
+      } else {
+        showToast("error", "Failed: " + err.message);
+      }
     } finally {
       setLoading(false);
     }
@@ -244,9 +332,9 @@ export default function DashboardPage({ wallet, onBack }: Props) {
               highlight={true}
             />
             <StatsCard
-              label="Emergency Status"
-              value={stats.isEmergency ? "ACTIVE" : "Normal"}
-              icon="warn"
+              label="XLM Balance"
+              value={xlmBalance ? `${parseFloat(xlmBalance).toFixed(2)} XLM` : "Loading..."}
+              icon="star"
               highlight={false}
             />
           </div>
@@ -326,7 +414,7 @@ export default function DashboardPage({ wallet, onBack }: Props) {
             <div className="csp-rows">
               <div className="csp-row">
                 <span className="csp-key">Network</span>
-                <span className="csp-val csp-network">Stellar Testnet</span>
+                <span className="csp-val csp-network">Stellar Testnet (Enforced)</span>
               </div>
               <div className="csp-row">
                 <span className="csp-key">Emergency</span>

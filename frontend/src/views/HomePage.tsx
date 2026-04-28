@@ -1,6 +1,9 @@
 // src/views/HomePage.tsx
 import { useState, useEffect, useRef } from "react";
 import type { WalletState } from "../types";
+import { getWalletNetwork } from "../lib/freighter";
+import { Server, Networks } from "@stellar/stellar-sdk";
+import { WrongNetworkError } from "../lib/freighter";
 
 interface Props {
   wallet: WalletState;
@@ -190,11 +193,27 @@ export default function HomePage({
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [copiedAddress, setCopiedAddress] = useState(false);
 
+  const [networkError, setNetworkError] = useState<string | null>(null);
+
   useEffect(() => {
-    const onScroll = () => setNavScrolled(window.scrollY > 20);
-    window.addEventListener("scroll", onScroll);
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+    const checkNetwork = async () => {
+      if (wallet.connected && wallet.address) {
+        try {
+          const network = await getWalletNetwork();
+          if (network !== Networks.TESTNET) {
+            setNetworkError("Please switch Freighter to Stellar Testnet");
+          } else {
+            setNetworkError(null);
+          }
+        } catch (err) {
+          // Ignore network check errors
+        }
+      } else {
+        setNetworkError(null);
+      }
+    };
+    checkNetwork();
+  }, [wallet.connected, wallet.address]);
 
   function handleCopyAddress() {
     if (wallet.address) {
