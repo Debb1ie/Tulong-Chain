@@ -10,7 +10,7 @@ import {
   getNetwork,
   getNetworkDetails,
 } from "@stellar/freighter-api";
-import * as StellarSDK from "@stellar/stellar-sdk";
+import Server from "@stellar/stellar-sdk";
 import { Networks } from "@stellar/stellar-sdk";
 
 // Testnet constants
@@ -149,7 +149,7 @@ export async function getWalletNetwork(): Promise<string | null> {
  */
 function getHorizonServer() {
   // @ts-ignore
-  return new StellarSDK.Server(TESTNET_HORIZON_URL);
+  return new Server(TESTNET_HORIZON_URL);
 }
 
 /**
