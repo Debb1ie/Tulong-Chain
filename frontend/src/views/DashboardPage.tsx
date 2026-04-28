@@ -1,6 +1,6 @@
 // src/views/DashboardPage.tsx
 import { useState, useEffect, useCallback } from "react";
-import { useQuery, useMutation } from "convex/react";
+import { useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import StatsCard from "../components/StatsCard";
 import DonateForm from "../components/DonateForm";
@@ -12,7 +12,6 @@ import {
   getBalance,
   isEmergency,
 } from "../lib/stellar";
-import { WrongNetworkError, AccountNotFundedError } from "../lib/freighter";
 import { CONFIG } from "../lib/config";
 import type { WalletState, FundStats } from "../types";
 
