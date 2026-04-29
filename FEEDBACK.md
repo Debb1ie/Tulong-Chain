@@ -80,10 +80,11 @@ Based on user feedback, the following iterations are prioritized:
 
 ### Sprint 1 — Batch Donations & Withdrawals (GitHub Issue #TBD)
 **Git Commit References**:
-- [ ] `feat(contract): add batch_donate and batch_withdraw functions` — (to be implemented)
-- [ ] `feat(frontend): batch donation form with multiple token entries` — (to be implemented)
+- ✅ `feat(contract): batch_donate and batch_withdraw functions` — already supported in contract
+- ✅ `feat(frontend): batch donation form with multiple token entries` — **Implemented**  
+  Commit: [`c538502`](https://github.com/Debb1ie/Tulong-Chain/commit/c538502) (BatchDonateForm component, batchDonateUSDC API)
 
-**Description**: Implement UI for donating to up to 50 recipients atomically. Form allows adding/removing batches, previewing total, and submitting single transaction.
+**Description**: Implemented UI for donating USDC to up to 50 recipients atomically. Form allows adding/removing batches, previewing total, and submitting single transaction.
 
 **User Value**: Reduces transaction overhead for organizations managing multiple family payouts.
 
