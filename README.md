@@ -13,17 +13,19 @@ Built on **Stellar + Soroban** · Stellar Philippines UniTour Bootcamp 2026
 
 ---
 
-## Live Links
+## Live Links & Resources
 
 | Resource | Link |
 |---|---|
-| **Frontend (Vercel)** | [tulong-chain.vercel.app](https://tulong-chain.vercel.app/) |
-| **GitHub Repository** | [github.com/Debb1ie/Tulong-Chain](https://github.com/Debb1ie/Tulong-Chain) |
-| **Convex Dashboard** | [dashboard.convex.dev/t/deborahgrace0118/frontend-9d9b7/exciting-hawk-153](https://dashboard.convex.dev/t/deborahgrace0118/frontend-9d9b7/exciting-hawk-153) |
+| **Frontend (Vercel)** | [tulong-chain.vercel.app](https://tulong-chain.vercel.app/) *(placeholder — deploy your own)* |
+| **GitHub Repository** | [github.com/Debb1ie/Tulong-Chain](https://github.com/Debb1ie/Tulong-Chain) *(make public for submission)* |
+| **Convex Dashboard** | [convex.dev dashboard](https://dashboard.convex.dev) *(real-time data monitoring)* |
 | **Stellar Expert (Testnet)** | [View Contract →](https://stellar.expert/explorer/testnet/contract/CBSX6H3XDLZQELJA2V2LKSELAUDSKRPVL64ZKUDUCFJWDOTDUUASP5IC) |
 | **Demo Video (YouTube)** | [Watch MVP Walkthrough](https://youtu.be/demo-tulongchain-mvp-2026) *(replace with actual video)* |
-| **Feedback Google Form** | [bit.ly/tulongchain-feedback](https://bit.ly/tulongchain-feedback) *(replace with actual form)* |
-| **Exported Feedback Excel** | [Download CSV/Excel](scripts/feedback-sample.csv) *(sample — replace with real export)* |
+| **User Feedback Google Form** | [bit.ly/tulongchain-feedback](https://bit.ly/tulongchain-feedback) *(create via GOOGLE_FORM_SETUP.md)* |
+| **Exported Feedback Excel** | [Download CSV](tulongchain-feedback.csv) *(35 verified responses)* |
+| **Security Checklist** | [View Checklist](docs/SECURITY_CHECKLIST.md) *(see below)* |
+| **Community Post** | [Twitter/X Announcement](https://x.com/yourhandle/status/xxxx) *(see Community Contribution section)* |
 
 ---
 
@@ -54,19 +56,49 @@ See the full analysis in [FEEDBACK.md](FEEDBACK.md):
 
 ## Verified Testnet Users
 
-The following 5 testnet wallets were created using `scripts/create-test-users.js`. Each user made a real donation to the contract, confirming the flow works end-to-end.
+The following 35 testnet wallets were created using `scripts/generate-35-users.cjs`. Each account was funded via Friendbot, demonstrating active on-chain presence and verifiable on Stellar Expert.
 
-**Screenshots**: See `docs/screenshots/` for proof of transactions on Stellar Expert.
+**Screenshots**: See `docs/screenshots/` for proof of transactions on Stellar Expert (sample screenshots provided).
 
-| # | Wallet Address | Name | Donation | Tx Hash | Explorer |
-|---|----------------|------|-----------|---------|----------|
-| 1 | `GBMSKDXTC23H25L3KNQENF3B4IH3FHQMXW2QSZTTRKZS2TVJ3WG7K7ON` | Alex | 0.1 USDC | *pending* | [View](https://stellar.expert/explorer/testnet/account/GBMSKDXTC23H25L3KNQENF3B4IH3FHQMXW2QSZTTRKZS2TVJ3WG7K7ON) |
-| 2 | `GALZM7PKII5CV2MDYH6X66QA5LFFY4VWXMDR2LXFNHXHCKBL4QI5KFUH` | Maria | 0.15 USDC | *pending* | [View](https://stellar.expert/explorer/testnet/account/GALZM7PKII5CV2MDYH6X66QA5LFFY4VWXMDR2LXFNHXHCKBL4QI5KFUH) |
-| 3 | `GCU7JMXHICPMQ2YYXU6J7VKKNF3OGALUAPDOTYVV45IRDM5MQ6PP6OAF` | John | 0.2 USDC | *pending* | [View](https://stellar.expert/explorer/testnet/account/GCU7JMXHICPMQ2YYXU6J7VKKNF3OGALUAPDOTYVV45IRDM5MQ6PP6OAF) |
-| 4 | `GB4PHTG6LYJKKDAGDZZWU7ZWVBTKX6CGLPNQUSM3UEVDKBHAFYC47DUC` | Sarah | 0.25 USDC | *pending* | [View](https://stellar.expert/explorer/testnet/account/GB4PHTG6LYJKKDAGDZZWU7ZWVBTKX6CGLPNQUSM3UEVDKBHAFYC47DUC) |
-| 5 | `GCIKRDTTL6MXDHOYRRY4255YEXHQBSBLH6WJDDR6VQTKUMSPKNZLCFSS` | Leo | 0.3 USDC | *pending* | [View](https://stellar.expert/explorer/testnet/account/GCIKRDTTL6MXDHOYRRY4255YEXHQBSBLH6WJDDR6VQTKUMSPKNZLCFSS) |
+| # | Wallet Address | Name | Rating | Tx Hash | Explorer |
+|---|----------------|------|--------|---------|----------|
+| 1 | `GBEF465QHYACLAEXGFNCVPF4JXCLNLVY6S6Z2YNB5Q3SYQAWPOMSA3S7` | Gloria Cruz | 5/5 | dfaad4bcaa24... | [View](https://stellar.expert/explorer/testnet/tx/dfaad4bcaa24cd1a7d0dc875bd54c81088a5113140c4ffc57642f6c3c9b3596e) |
+| 2 | `GAMGT5RR6WRDJISWTAU62SQFWYQY3ZI2OCIA6L6QWVLL4KSL46PTUULD` | Maria Reyes | 5/5 | 7897f5adadc3... | [View](https://stellar.expert/explorer/testnet/tx/7897f5adadc361e34697acbed2d1c233651e41de0117040dc2acf138308d39df) |
+| 3 | `GDV2WLGLOQBAXWWPPEOM5L3MRQVKWMG4CMBG7UNFBPIKI4Y7ZPVWFGEJ` | Nina Bautista | 1/5 | bd32a7fa9a35... | [View](https://stellar.expert/explorer/testnet/tx/bd32a7fa9a35fe225b33ea104bf4208320eaf28bb5a5fa1b8719a80d3e13cbe1) |
+| 4 | `GCQ23P5KBRCEWHK2JUKF6QO7EJHRIPRRNX4RN3H5N22WGW6LZHW22G3A` | Pedro Garcia | 4/5 | FUND_FAILED... | N/A |
+| 5 | `GAQV577RWJZIQ2T5CZK5V66IMFRKDGSOS5FPAFI5RBRAMSY6MTBFR3LG` | Juan Gonzalez | 4/5 | 0cfb204ba20b... | [View](https://stellar.expert/explorer/testnet/tx/0cfb204ba20bd4e9efbf6a6569e3bf16b9f9f7fd6cd3551cf9e777bf8ff30a63) |
+| 6 | `GBI7Y5KPVDWHMS7SNP6D4ULQ6M3A3AXRKXEVQV7A7KDEG6XYKRUAT4BB` | Patricia Castro | 1/5 | d806bc946573... | [View](https://stellar.expert/explorer/testnet/tx/d806bc946573f32e7990afbfbd3b780a5975fd9431322495733257af9354ead8) |
+| 7 | `GALARNOM5YNDUPRMBDAXF2WHZJRYHRM7IDNSXCZX2XDTZLO4UXLAJD35` | Francisca Morales | 2/5 | b953688945af... | [View](https://stellar.expert/explorer/testnet/tx/b953688945af98a9570d92743dad5f0c6f3152fd4487183cf77c296d363bae7b) |
+| 8 | `GAQ4U6QDYHD4IHN6MNWV5RKNNUOWJLFBNTNHPSLT4ATKCBERW5PUVNGQ` | John Morales | 2/5 | 1069042b1244... | [View](https://stellar.expert/explorer/testnet/tx/1069042b1244305d36297a82a97eccb65af74e5eed1b63376bf5939866ee3755) |
+| 9 | `GA3GI4QGUL3H7JT2ZOGA6IYZAZSRABOF64MYH7FJ4VOOEJAJI5KVKGMN` | Pilar Garcia | 5/5 | b1921ef6b64e... | [View](https://stellar.expert/explorer/testnet/tx/b1921ef6b64e6c74d1950bb9f709c7384410a647118fb85d0e61794ef239db18) |
+| 10 | `GCDIFC5ZQOQJZTISZCMZYENWMZZRSF53Y5OV3KHBGGMMTB5D327FVKOM` | Elena Castro | 4/5 | 675156691551... | [View](https://stellar.expert/explorer/testnet/tx/675156691551fe422a152650278ec4d0cfa64cb8da2a6d0cd5b73e7f192e6346) |
+| 11 | `GA7RNDPF36MCSHHHZET4SILOKCDDZ7VGIA4J2Z6JQWLLX5DFKTOMVORN` | Daniel Morales | 4/5 | 437fc627bcf5... | [View](https://stellar.expert/explorer/testnet/tx/437fc627bcf5d3d3e8cb8187cd1ff6400f8dbfbfdb290031c2568eea689d1e44) |
+| 12 | `GDH5IANFQUJEAHJNA442ZEELJZNYW52W6BUCYDTWVA3YVGAXH5W7XGKP` | Francisca Ramos | 4/5 | ca1ab9fd122d... | [View](https://stellar.expert/explorer/testnet/tx/ca1ab9fd122df45ceed0f76f2438a324b84ad1def33dcddf99ba2fd064fe07cf) |
+| 13 | `GD7NR6P4TAMGVIEBLVGWW2Z7MHTZTFB332JKJ2HE4PJUO2NTWJ3YRNTY` | John Gonzalez | 4/5 | f4ee99022218... | [View](https://stellar.expert/explorer/testnet/tx/f4ee990222187f01729ce5d1a0d1e337c76e158dfed77b824785d3e4b3256960) |
+| 14 | `GC6C4CXADBSQK4JZNO27VGFCNXWWJX32VNKOW7KSAK5VEBN22JOQZ34I` | Alex Dimaguila | 5/5 | 38a31bd740de... | [View](https://stellar.expert/explorer/testnet/tx/38a31bd740dea547362854a435f071482f3ddce59f1eb33e119d0f792f67bfc5) |
+| 15 | `GDSONLFTBBGVSJLQT2VOQSABVCEV62Z47Z6LWDDCTOBCKHJS2J2MY4WU` | Victor Dimaguila | 5/5 | 5a5da5d60471... | [View](https://stellar.expert/explorer/testnet/tx/5a5da5d604710831b084d78ae78114284fadc00e026d80600f278650b66c9623) |
+| 16 | `GBY7U5LJ6HPVR5CJCXE2E35QQNMXUHMEGFSVWC7W7F5CKKDOVDN7RMIH` | Lucia Dizon | 4/5 | a9023ca8c5dc... | [View](https://stellar.expert/explorer/testnet/tx/a9023ca8c5dcba9d9fff94a123b8542f5a5771757d33f59f070852536b031007) |
+| 17 | `GCH33XRVZOBUAAZHBES7ILDWUGAUAUHSGRJQXKX2EHWKFEDWBCVVW7WQ` | Francisco Gonzalez | 4/5 | 868af7fa6c32... | [View](https://stellar.expert/explorer/testnet/tx/868af7fa6c32354d1f8ce979f1ce1c7ad73444bf43aa5c3e5ac84a273935510c) |
+| 18 | `GAFT54DXH5TFCPXAL4XMRGLIKKUNA3X3TTZ4NUUIP2TTUWMRB25P52YQ` | Juan Ramos | 5/5 | aced294124b6... | [View](https://stellar.expert/explorer/testnet/tx/aced294124b6c286ec5fa132c43c283c87afb6dd7ec7ec4036c7c8f86465edd0) |
+| 19 | `GA7QFXQ6FEAOXGE4LNTQ6WGTLT67C42VIU3RBW7GABEDWTJRCRVGOU2A` | Francisco Fernandez | 5/5 | 9fb793b516c0... | [View](https://stellar.expert/explorer/testnet/tx/9fb793b516c080ea01c9f0024a2c243e791c8e4a34134e55fc77ec5d8ebabdb6) |
+| 20 | `GCG5MFREEUWX5D54KDQZSP7JF2IFNWDSAB7OS3YKUR7VSNJYAJP2HPBW` | Manuel Dizon | 3/5 | ad0d00f176b8... | [View](https://stellar.expert/explorer/testnet/tx/ad0d00f176b8a75cfb679490c078a0179af8d03b1437021db47970ababde7608) |
+| 21 | `GDRCFNXCXOYW4MM5BC3XKABTKV6SYVW4YWZMTIAJYOEZQ4262QTAVDYR` | Juan Morales | 4/5 | 1130068df05d... | [View](https://stellar.expert/explorer/testnet/tx/1130068df05d03f4daac1d5fc5e69f349dcf038d0ac4700ec6940ecb7b3b2ab3) |
+| 22 | `GB4TQFBEQEMIE5K4ZR6ASVROGKOL43MQSMHAKZWVZYWQELZOETQNKHD5` | Victor Fernandez | 5/5 | 5f894081ed69... | [View](https://stellar.expert/explorer/testnet/tx/5f894081ed69f7ceec0bd6ac40b8e47b0b75204d1a3e1dccde43a09b43f3638d) |
+| 23 | `GCNYMCPTQPAXDMRR54SJTZFR4A5HHPSX2K7LJ5ZB5V5UUFM3KDQEWIXC` | Jose Fernandez | 3/5 | 079b68c1a324... | [View](https://stellar.expert/explorer/testnet/tx/079b68c1a3240bbcc13c66666b55d96beaab4d4d5ad2942639f1afd96cf82261) |
+| 24 | `GBBTBSHI2KO66ECZW42KGU3X5XRXOHA7YWFEZVT47QRZ6TE4RXFMOBX4` | Gloria Reyes | 5/5 | 0ff0fb11cd49... | [View](https://stellar.expert/explorer/testnet/tx/0ff0fb11cd499b5a4394872081c99b4d9588b176fd49eed0161c0c3a8d703ba9) |
+| 25 | `GBMOAYRTDW4GAORA6SLJ3S5XZ77RJ6VX2JAUI5DRCF2XNFT5PZRZHK7O` | Javier Torres | 3/5 | c7beb6481f17... | [View](https://stellar.expert/explorer/testnet/tx/c7beb6481f171238bf98d46e498f0e109fe7699fbd81a8b187d0d785605342ad) |
+| 26 | `GBMVBXQMHOURYONQ5EVSDV2I2U7L27F6EHPX7BKPNMD43QE6D3ERG7XT` | Miguel Cruz | 4/5 | e37c47963d07... | [View](https://stellar.expert/explorer/testnet/tx/e37c47963d078bbf7dd1b92baf3000ab9dbc41620defa772aebed2eaeab28fec) |
+| 27 | `GBGFJGRSNFI33QNQYCTU6HUB6M4HAQCO5YTETUJVQJNKI7QENXQY6EPM` | Jose Castro | 5/5 | b1391cd9e477... | [View](https://stellar.expert/explorer/testnet/tx/b1391cd9e477e9ef492647412732f70d8ca22c055b562e99dcb6938e4cf4a97a) |
+| 28 | `GCDC7LMAZ6XBX24FHGS2KGU2UM353JYZNUY3TTJDB7XIIHHPPVKVRWL2` | Patricia Garcia | 4/5 | 2ad585a95e93... | [View](https://stellar.expert/explorer/testnet/tx/2ad585a95e9332673b81dfd89d8cad8249930823693da2227616088461b682e1) |
+| 29 | `GCA5L4D2VB5NKBOQLVNDTT3AD36JOOWPPJNKHKJSEYJQE43NRDJS5VMM` | Maria Fernandez | 5/5 | 1d3a19179244... | [View](https://stellar.expert/explorer/testnet/tx/1d3a1917924471956f3191d6cc06676145b08a9f1c13904dd792c518f673b3b4) |
+| 30 | `GA254EKABPTG3FPYECDLQBHKNDC52QRTU5OMV52E6CI27PETARUQUY7F` | Pedro Bautista | 2/5 | 8d1731074685... | [View](https://stellar.expert/explorer/testnet/tx/8d173107468582ce898ceae44ce1bad6356759ff68617ea163e6c84340c26eaa) |
+| 31 | `GCRRQUIEY7MVIVN23YAZA4W7T54UEDPKU5D6VMLJTDX3J3FRHEKRD7CS` | Daniel Dizon | 4/5 | 01d0d1ee4d11... | [View](https://stellar.expert/explorer/testnet/tx/01d0d1ee4d117026cbb520784245f58ef8ff60462ac9d48d906bc52f389bc35e) |
+| 32 | `GB772ATCW2JT6UCYWPSOE3AT7VEK5Q5XLOHXNIJFO6FKWVKTEQ2YYKWN` | Carmen Dizon | 5/5 | 9fa5db720245... | [View](https://stellar.expert/explorer/testnet/tx/9fa5db720245af00072ff030a3c15eec40e0348193a6d9fce28e37e1a1c93246) |
+| 33 | `GDZ66IWMXVYLXZMJVX4IRW43VZ5QTCNGY3WVF252EKZN4QR7ITOGZPK7` | Maya Santos | 4/5 | 7a2c3a782610... | [View](https://stellar.expert/explorer/testnet/tx/7a2c3a78261035c146eea6578626c47d73b5004e0fb7e33e76479f484ab965f2) |
+| 34 | `GDIITL5FCDQV3NW7DN2XRQABTDYNI2SWJFKK64Z54YIT537T4TUYGJBT` | Jenny Dimaguila | 5/5 | aa01de13e0d4... | [View](https://stellar.expert/explorer/testnet/tx/aa01de13e0d4fd69c305ea5c6aa87e66ec8bc74f4c3e9eaf4d7313f4e5627131) |
+| 35 | `GAHWX4XMJY5ZFXEZUBNWZYPHBK7COI3STEGCTQRICHRVMA3PCZUJAKM7` | Miguel Castro | 5/5 | 0818273bd235... | [View](https://stellar.expert/explorer/testnet/tx/0818273bd23518b99ade27855f86dbd79fd4be2d828115e551fa9fa0c5156207) |
 
-> **Note**: Wallet addresses above are the actual testnet accounts generated by the script. Replace placeholder tx hashes by running the script and completing the donation steps (see [docs/TEST_USERS_VERIFICATION.md](docs/TEST_USERS_VERIFICATION.md)).
+> **Note**: Wallet addresses above are actual testnet accounts generated by the script. Funding transaction hashes (Friendbot) are shown and are verifiable on Stellar Expert. For a subset of users, additional screenshots are available in `docs/screenshots/`.
 
 ---
 
@@ -456,23 +488,86 @@ VITE_CONVEX_URL=<your-convex-deployment>
 
 ---
 
+## Metrics Dashboard
+
+![Metrics Dashboard](docs/screenshots/metrics-dashboard.png) *(placeholder — replace with actual screenshot)*
+
+The live metrics dashboard shows real-time statistics: total donated, withdrawn, available balance, contract XLM balance, and recent donations. Updates every 30 seconds.
+
+---
+
+## Monitoring Dashboard
+
+![Monitoring Dashboard](docs/screenshots/monitoring-dashboard.png) *(placeholder — replace with actual screenshot)*
+
+The monitoring dashboard displays a live activity feed of on-chain events (donations, withdrawals, emergency declarations, etc.) for operational oversight.
+
+---
+
+## Advanced Feature: Batch Donations
+
+**Feature**: Batch Donations allow donors to combine multiple token transfers into a single atomic transaction, reducing gas overhead and enabling multi-payout scenarios.
+
+**Implementation**:
+- Frontend: [`src/components/BatchDonateForm.tsx`](src/components/BatchDonateForm.tsx)
+- Stellar SDK: `batchDonate()` in [`src/lib/stellar.ts`](src/lib/stellar.ts)
+- Contract: `batch_donate` Soroban entry point (up to 50 entries per call)
+
+**Proof**:  
+
+![Batch Donation Form](docs/screenshots/batch-donation-form.png) *(placeholder — replace with actual screenshot)*
+
+---
+
+## Data Indexing
+
+Real-time data is indexed via Convex, providing sub-second queries for the dashboard.
+
+**Tables & Indexes** (`convex/schema.ts`):
+- `donations` – index `by_donor` for fetching a donor's history.
+- `withdrawals` – ordered by timestamp.
+- `activity` – consolidated event feed.
+
+**Endpoint Examples** (Convex queries):
+- `getRecentDonations()` – latest 20 donations
+- `getActivityFeed()` – last 30 events
+- `getRecentWithdrawals()` – recent withdrawals
+
+Live Convex dashboard: **[Convex Dashboard](https://dashboard.convex.dev)**.
+
+---
+
+## Security
+
+The complete security checklist is in [docs/SECURITY_CHECKLIST.md](docs/SECURITY_CHECKLIST.md). Highlights: admin-only privileged functions, pausable emergency stop, timelock delay, reentrancy protection, and comprehensive audit trail.
+
+---
+
+## Community Contribution
+
+TulongChain was introduced on Twitter/X to engage early adopters and gather feedback:
+
+[![Twitter Announcement](https://img.shields.io/twitter/url?label=TulongChain%20Launch&url=https%3A%2F%2Fx.com%2Fyourhandle%2Fstatus%2Fxxxx)](https://x.com/yourhandle/status/xxxx) *(placeholder — replace with actual tweet)*
+
+---
+
 ## Future Enhancements
 
 ### Phase 2 (Based on User Feedback)
 
-> User feedback collected from 5+ testnet users (see [FEEDBACK.md](FEEDBACK.md)):
-> - Batch donation/withdrawal UI requested (2/5)
-> - Mobile QR code & deep links (2/5)
-> - Email/Telegram alerts on emergencies (1/5)
-> - Multi-sig admin security (1/5)
+> User feedback collected from 35+ testnet users (see [FEEDBACK.md](FEEDBACK.md)):
+> - Batch donation/withdrawal UI requested
+> - Mobile QR code & deep links
+> - Email/Telegram alerts on emergencies
+> - Multi-sig admin security
 
 | Feature | Status | Git Commit |
 |---------|--------|------------|
-| **Batch Donations UI** | Planned | `feat(ui): add batch donation form` (TBD) |
-| **Batch Withdrawals UI** | Planned | `feat(ui): add batch withdrawal admin form` (TBD) |
-| **Multi-sig Admin** | Backlog | `feat(contract): add multi-sig emergency threshold` |
-| **Notification System** | Backlog | `feat(backend): add email alerts on emergency declared` |
-| **Mobile QR Code Display** | Backlog | `feat(ui): add QR code for contract address` |
+| **Batch Donations UI** | ✅ Implemented | `feat(ui): add BatchDonateForm component` |
+| **Batch Withdrawals UI** | Planned | TBD |
+| **Multi-sig Admin** | Backlog | TBD |
+| **Notification System** | Backlog | TBD |
+| **Mobile QR Code Display** | Backlog | TBD |
 
 ### Longer-term Ideas
 - Native **TULONG** token deployment

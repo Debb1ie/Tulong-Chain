@@ -248,12 +248,22 @@ export async function setTimelock(callerAddress: string, seconds: number): Promi
   return txHash;
 }
 
-// Batch operations (future)
+// Batch operations
 export async function batchDonate(
   callerAddress: string,
   batches: Array<{token: string, amount: number, asset: string}>
 ): Promise<string> {
-  throw new Error("Batch donate UI not yet implemented");
+  const args = batches.map(batch => [
+    new Address(batch.token).toScVal(),
+    nativeToScVal(batch.amount * 1e7, { type: "i128" }), // USDC has 7 decimals
+    nativeToScVal(batch.asset === "XLM" ? 0n : 1n, { type: "u32" }) // 0=XLM native, 1=USDC token
+  ]);
+  
+  const { txHash } = await invokeContract(callerAddress, "batch_donate", [
+    nativeToScVal(args.length, { type: "u32" }),
+    ...args.flat()
+  ]);
+  return txHash;
 }
 
 export async function batchWithdraw(
@@ -261,5 +271,15 @@ export async function batchWithdraw(
   token: string,
   batches: Array<{purpose: string, amount: number}>
 ): Promise<string> {
-  throw new Error("Batch withdraw UI not yet implemented");
+  const args = batches.map(batch => [
+    nativeToScVal(batch.purpose, { type: "string" }),
+    nativeToScVal(batch.amount * 1e7, { type: "i128" })
+  ]);
+  
+  const { txHash } = await invokeContract(callerAddress, "batch_withdraw", [
+    new Address(token).toScVal(),
+    nativeToScVal(args.length, { type: "u32" }),
+    ...args.flat()
+  ]);
+  return txHash;
 }

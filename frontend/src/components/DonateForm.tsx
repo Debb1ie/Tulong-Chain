@@ -1,10 +1,12 @@
 // src/components/DonateForm.tsx
 import { useState } from "react";
-import { donate, donateXlm } from "../lib/stellar";
+import { donate, donateXlm, batchDonate } from "../lib/stellar";
 import { downloadFeedbackCSV } from "../lib/feedback";
 import type { WalletState } from "../types";
+import BatchDonateForm from "./BatchDonateForm";
 
 type AssetType = "USDC" | "XLM";
+type DonationMode = "single" | "batch";
 
 interface Props {
   wallet: WalletState;
@@ -13,7 +15,8 @@ interface Props {
 }
 
 export default function DonateForm({ wallet, isAdmin = false, onConnect }: Props) {
-  const [asset, setAsset] = useState<AssetType>("USDC"); // Default to USDC (live contract supports it)
+  const [mode, setMode] = useState<DonationMode>("single"); // "single" or "batch"
+  const [asset, setAsset] = useState<AssetType>("USDC");
   const [donationAmount, setDonationAmount] = useState(0.1);
   const [donating, setDonating] = useState(false);
   const [statusMsg, setStatusMsg] = useState("");
@@ -59,70 +62,93 @@ export default function DonateForm({ wallet, isAdmin = false, onConnect }: Props
     <div className="donate-simple">
       <h3 className="form-h3">Donate to the Relief Fund</h3>
       <p className="form-desc">
-        Choose asset and amount. Freighter will pop up for confirmation.
-        Your donation appears in real-time below.
+        Support Filipino families with transparent on-chain donations.
       </p>
 
-      <div className="asset-toggle">
+      {/* Mode toggle */}
+      <div className="mode-toggle">
         <button
           type="button"
-          className={`asset-btn ${asset === "XLM" ? "active" : ""}`}
-          onClick={() => setAsset("XLM")}
+          className={`mode-btn ${mode === "single" ? "active" : ""}`}
+          onClick={() => setMode("single")}
         >
-          XLM (Native)
+          Single Donation
         </button>
         <button
           type="button"
-          className={`asset-btn ${asset === "USDC" ? "active" : ""}`}
-          onClick={() => setAsset("USDC")}
+          className={`mode-btn ${mode === "batch" ? "active" : ""}`}
+          onClick={() => setMode("batch")}
         >
-          USDC (Stablecoin)
+          Batch Donation (Advanced)
         </button>
       </div>
 
-      <div className="donate-amounts">
-        {(asset === "XLM" ? amountsXlm : amountsUsdc).map((amt) => (
+      {mode === "single" ? (
+        <>
+          <div className="asset-toggle">
+            <button
+              type="button"
+              className={`asset-btn ${asset === "XLM" ? "active" : ""}`}
+              onClick={() => setAsset("XLM")}
+            >
+              XLM (Native)
+            </button>
+            <button
+              type="button"
+              className={`asset-btn ${asset === "USDC" ? "active" : ""}`}
+              onClick={() => setAsset("USDC")}
+            >
+              USDC (Stablecoin)
+            </button>
+          </div>
+
+          <div className="donate-amounts">
+            {(asset === "XLM" ? amountsXlm : amountsUsdc).map((amt) => (
+              <button
+                key={amt}
+                className={`donate-amount-btn ${donationAmount === amt ? "active" : ""}`}
+                onClick={() => setDonationAmount(amt)}
+                disabled={donating}
+              >
+                ${amt}
+              </button>
+            ))}
+          </div>
+
           <button
-            key={amt}
-            className={`donate-amount-btn ${donationAmount === amt ? "active" : ""}`}
-            onClick={() => setDonationAmount(amt)}
+            className="btn-primary donate-submit"
+            onClick={() => handleDonate(donationAmount)}
             disabled={donating}
           >
-            ${amt}
+            {donating ? "Processing..." : `Donate $${donationAmount} ${asset}`}
           </button>
-        ))}
-      </div>
 
-      <button
-        className="btn-primary donate-submit"
-        onClick={() => handleDonate(donationAmount)}
-        disabled={donating}
-      >
-        {donating ? "Processing..." : `Donate $${donationAmount} ${asset}`}
-      </button>
+          {statusMsg && (
+            <p className={`donate-status ${statusMsg.startsWith("✅") ? "success" : "error"}`}>
+              {statusMsg}
+            </p>
+          )}
 
-      {statusMsg && (
-        <p className={`donate-status ${statusMsg.startsWith("✅") ? "success" : "error"}`}>
-          {statusMsg}
-        </p>
-      )}
+          <div className="donate-steps">
+            <div className="step-item"><span className="step-num-mini">1</span><span>Select asset & amount</span></div>
+            <div className="step-item"><span className="step-num-mini">2</span><span>Approve in Freighter</span></div>
+            <div className="step-item"><span className="step-num-mini">3</span><span>Watch it appear in history</span></div>
+          </div>
 
-      <div className="donate-steps">
-        <div className="step-item"><span className="step-num-mini">1</span><span>Select asset & amount</span></div>
-        <div className="step-item"><span className="step-num-mini">2</span><span>Approve in Freighter</span></div>
-        <div className="step-item"><span className="step-num-mini">3</span><span>Watch it appear in history</span></div>
-      </div>
+          {asset === "USDC" && (
+            <p style={{ fontSize: "0.8rem", color: "var(--muted)", marginTop: "0.5rem" }}>
+              ⚠️ First-time USDC donors: Add a USDC trustline in Freighter (Settings → Assets).
+            </p>
+          )}
 
-      {asset === "USDC" && (
-        <p style={{ fontSize: "0.8rem", color: "var(--muted)", marginTop: "0.5rem" }}>
-          ⚠️ First-time USDC donors: Add a USDC trustline in Freighter (Settings → Assets).
-        </p>
-      )}
-
-      {asset === "XLM" && (
-        <p style={{ fontSize: "0.8rem", color: "var(--red)", marginTop: "0.5rem", fontWeight: 700 }}>
-          ⚠️ XLM donations require contract redeploy. Run: <code style={{background: "var(--off-white)", padding: "2px 6px", borderRadius: "4px"}}>node scripts/deploy-contract.js</code>
-        </p>
+          {asset === "XLM" && (
+            <p style={{ fontSize: "0.8rem", color: "var(--red)", marginTop: "0.5rem", fontWeight: 700 }}>
+              ⚠️ XLM donations require contract redeploy. Run: <code style={{background: "var(--off-white)", padding: "2px 6px", borderRadius: "4px"}}>node scripts/deploy-contract.js</code>
+            </p>
+          )}
+        </>
+      ) : (
+        <BatchDonateForm wallet={wallet} onConnect={onConnect} />
       )}
 
       {isAdmin && (
@@ -137,6 +163,29 @@ export default function DonateForm({ wallet, isAdmin = false, onConnect }: Props
           </button>
         </div>
       )}
+
+      <style>{`
+        .mode-toggle {
+          display: flex;
+          gap: 0.5rem;
+          margin-bottom: 1.5rem;
+        }
+        .mode-btn {
+          flex: 1;
+          padding: 0.75rem 1rem;
+          border: 2px solid var(--border-strong);
+          background: white;
+          cursor: pointer;
+          font-weight: 600;
+          border-radius: 8px;
+          transition: all 0.2s;
+        }
+        .mode-btn.active {
+          background: var(--yellow);
+          border-color: var(--black);
+          box-shadow: 2px 2px 0 var(--black);
+        }
+      `}</style>
     </div>
   );
 }
