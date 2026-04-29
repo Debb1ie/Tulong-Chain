@@ -162,7 +162,7 @@ Typhoon victims wait **days** for food and medicine while coordinators lose a cu
 **Advanced safety features** (production-grade):
 - **Pausable** – Admin can halt all operations in case of bug or attack
 - **Emergency Timelock** – Declared emergencies require a configurable delay (default 0 = instant, can be set to ≥1 h) before withdrawals activate
-- **Batch Donations** – Donors can batch multiple token transfers atomically (up to 50 per call)
+- **Batch Donations** – Donors can batch multiple USDC transfers atomically (up to 50 per call)
 - **Batch Withdrawals** – Coordinators can release funds for multiple relief purposes in a single transaction (up to 20 per call)
 - **Immutable History** – Full on-chain audit trail of donations and withdrawals
 
