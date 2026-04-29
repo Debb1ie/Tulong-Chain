@@ -1,13 +1,10 @@
 // src/components/BatchDonateForm.tsx
 import { useState } from "react";
-import { batchDonate } from "../lib/stellar";
+import { batchDonateUSDC } from "../lib/stellar";
 import type { WalletState } from "../types";
-
-type AssetType = "USDC" | "XLM";
 
 interface BatchItem {
   id: number;
-  asset: AssetType;
   amount: number;
 }
 
@@ -20,7 +17,7 @@ const AMOUNT_PRESETS = [0.1, 0.5, 1, 5, 10, 25, 50, 100];
 
 export default function BatchDonateForm({ wallet, onConnect }: Props) {
   const [items, setItems] = useState<BatchItem[]>([
-    { id: Date.now(), asset: "USDC", amount: 0.1 }
+    { id: Date.now(), amount: 0.1 }
   ]);
   const [donating, setDonating] = useState(false);
   const [statusMsg, setStatusMsg] = useState("");
@@ -41,7 +38,7 @@ export default function BatchDonateForm({ wallet, onConnect }: Props) {
   function addItem() {
     setItems(prev => [
       ...prev,
-      { id: Date.now(), asset: "USDC", amount: 0.1 }
+      { id: Date.now(), amount: 0.1 }
     ]);
   }
 
@@ -51,9 +48,9 @@ export default function BatchDonateForm({ wallet, onConnect }: Props) {
     }
   }
 
-  function updateItem(id: number, updates: Partial<BatchItem>) {
+  function updateItem(id: number, amount: number) {
     setItems(prev => prev.map(item =>
-      item.id === id ? { ...item, ...updates } : item
+      item.id === id ? { ...item, amount } : item
     ));
   }
 
@@ -63,17 +60,11 @@ export default function BatchDonateForm({ wallet, onConnect }: Props) {
     setStatusMsg("Processing batch donation...");
 
     try {
-      // Convert items to batch format expected by contract
-      const batches = items.map(item => ({
-        token: item.asset === "USDC" ? "USDC" : "XLM",
-        amount: item.amount,
-        asset: item.asset === "USDC" ? 1 : 0 // 0 = native/XLM, 1 = token/USDC
-      }));
-
-      const txHash = await batchDonate(wallet.address, batches);
+      const amounts = items.map(item => item.amount);
+      const txHash = await batchDonateUSDC(wallet.address, amounts);
       
-      const total = items.reduce((sum, item) => sum + item.amount, 0);
-      setStatusMsg(`✅ Batch donation of ${total.toFixed(2)} USDC/XLM successful! Tx: ${txHash.slice(0, 14)}...`);
+      const total = amounts.reduce((sum, amt) => sum + amt, 0);
+      setStatusMsg(`✅ Batch donation of ${total.toFixed(2)} USDC successful! Tx: ${txHash.slice(0, 14)}...`);
       setTimeout(() => setStatusMsg(""), 10000);
     } catch (err: any) {
       setStatusMsg(`❌ ${err.message || "Batch donation failed"}`);
@@ -89,8 +80,7 @@ export default function BatchDonateForm({ wallet, onConnect }: Props) {
     <div className="donate-simple batch-donate-form">
       <h3 className="form-h3">Batch Donation (Advanced)</h3>
       <p className="form-desc">
-        Donate to multiple causes or token types in a single atomic transaction.
-        Add up to 50 entries per batch.
+        Donate USDC to multiple causes in a single atomic transaction. Add up to 50 entries per batch.
       </p>
 
       <div className="batch-items">
@@ -98,24 +88,13 @@ export default function BatchDonateForm({ wallet, onConnect }: Props) {
           <div key={item.id} className="batch-item-row">
             <div className="batch-item-number">#{index + 1}</div>
             
-            <div className="batch-asset-select">
-              <select
-                value={item.asset}
-                onChange={(e) => updateItem(item.id, { asset: e.target.value as AssetType })}
-                disabled={donating}
-              >
-                <option value="USDC">USDC</option>
-                <option value="XLM">XLM</option>
-              </select>
-            </div>
-
             <div className="batch-amount-select">
               {AMOUNT_PRESETS.map(amt => (
                 <button
                   key={amt}
                   type="button"
                   className={`batch-amount-btn ${item.amount === amt ? "active" : ""}`}
-                  onClick={() => updateItem(item.id, { amount: amt })}
+                  onClick={() => updateItem(item.id, amt)}
                   disabled={donating}
                 >
                   ${amt}
@@ -126,7 +105,7 @@ export default function BatchDonateForm({ wallet, onConnect }: Props) {
                 min="0.01"
                 step="0.01"
                 value={item.amount}
-                onChange={(e) => updateItem(item.id, { amount: parseFloat(e.target.value) || 0 })}
+                onChange={(e) => updateItem(item.id, parseFloat(e.target.value) || 0)}
                 disabled={donating}
                 className="batch-custom-amount"
                 placeholder="Custom"
@@ -159,7 +138,7 @@ export default function BatchDonateForm({ wallet, onConnect }: Props) {
 
       <div className="batch-summary">
         <div className="batch-total">
-          Total: <strong>{totalAmount.toFixed(2)}</strong> {items.some(i => i.asset === "XLM") ? "(mixed assets)" : "USDC"}
+          Total: <strong>{totalAmount.toFixed(2)}</strong> USDC
         </div>
         <div className="batch-count">{items.length} entr{items.length === 1 ? "y" : "ies"}</div>
       </div>
@@ -182,12 +161,11 @@ export default function BatchDonateForm({ wallet, onConnect }: Props) {
         <details>
           <summary>What is batch donation?</summary>
           <p>
-            Batch donation lets you send multiple donations in a single on-chain transaction.
+            Batch donation lets you send multiple donations in a single atomic transaction.
             Perfect for:
           </p>
           <ul>
             <li>Donating to multiple relief categories at once (food, water, medicine)</li>
-            <li>Mixing XLM and USDC in one transaction</li>
             <li>Organizations managing multiple fund allocations</li>
           </ul>
           <p>
@@ -220,14 +198,6 @@ export default function BatchDonateForm({ wallet, onConnect }: Props) {
           font-size: 0.8rem;
           color: var(--muted);
           min-width: 2rem;
-        }
-        .batch-asset-select select {
-          padding: 0.5rem;
-          border: 2px solid var(--black);
-          border-radius: 6px;
-          font-weight: 600;
-          background: white;
-          min-width: 80px;
         }
         .batch-amount-select {
           display: flex;

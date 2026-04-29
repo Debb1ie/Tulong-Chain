@@ -1,0 +1,322 @@
+{
+  "generatedAt": "2026-04-29T03:23:34.825Z",
+  "network": "testnet",
+  "totalGenerated": 35,
+  "users": [
+    {
+      "id": 1,
+      "name": "Gloria Cruz",
+      "wallet": "GBEF465QHYACLAEXGFNCVPF4JXCLNLVY6S6Z2YNB5Q3SYQAWPOMSA3S7",
+      "rating": 5,
+      "feedback": "Great work! This is exactly what PH needs.",
+      "activityType": "account_creation",
+      "txHash": "dfaad4bcaa24cd1a7d0dc875bd54c81088a5113140c4ffc57642f6c3c9b3596e"
+    },
+    {
+      "id": 2,
+      "name": "Maria Reyes",
+      "wallet": "GAMGT5RR6WRDJISWTAU62SQFWYQY3ZI2OCIA6L6QWVLL4KSL46PTUULD",
+      "rating": 5,
+      "feedback": "Like beneficiary attestation feature idea.",
+      "activityType": "account_creation",
+      "txHash": "7897f5adadc361e34697acbed2d1c233651e41de0117040dc2acf138308d39df"
+    },
+    {
+      "id": 3,
+      "name": "Nina Bautista",
+      "wallet": "GDV2WLGLOQBAXWWPPEOM5L3MRQVKWMG4CMBG7UNFBPIKI4Y7ZPVWFGEJ",
+      "rating": 1,
+      "feedback": "Add more token support beyond USDC/XLM.",
+      "activityType": "account_creation",
+      "txHash": "bd32a7fa9a35fe225b33ea104bf4208320eaf28bb5a5fa1b8719a80d3e13cbe1"
+    },
+    {
+      "id": 4,
+      "name": "Pedro Garcia",
+      "wallet": "GCQ23P5KBRCEWHK2JUKF6QO7EJHRIPRRNX4RN3H5N22WGW6LZHW22G3A",
+      "rating": 4,
+      "feedback": "Donation receipts for tax purposes would help.",
+      "activityType": "account_creation",
+      "txHash": "FUND_FAILED"
+    },
+    {
+      "id": 5,
+      "name": "Juan Gonzalez",
+      "wallet": "GAQV577RWJZIQ2T5CZK5V66IMFRKDGSOS5FPAFI5RBRAMSY6MTBFR3LG",
+      "rating": 4,
+      "feedback": "Recurring donation subscriptions would be great.",
+      "activityType": "account_creation",
+      "txHash": "0cfb204ba20bd4e9efbf6a6569e3bf16b9f9f7fd6cd3551cf9e777bf8ff30a63"
+    },
+    {
+      "id": 6,
+      "name": "Patricia Castro",
+      "wallet": "GBI7Y5KPVDWHMS7SNP6D4ULQ6M3A3AXRKXEVQV7A7KDEG6XYKRUAT4BB",
+      "rating": 1,
+      "feedback": "Consider adding NFT-based certificates for donors.",
+      "activityType": "account_creation",
+      "txHash": "d806bc946573f32e7990afbfbd3b780a5975fd9431322495733257af9354ead8"
+    },
+    {
+      "id": 7,
+      "name": "Francisca Morales",
+      "wallet": "GALARNOM5YNDUPRMBDAXF2WHZJRYHRM7IDNSXCZX2XDTZLO4UXLAJD35",
+      "rating": 2,
+      "feedback": "Maybe add language selector for Filipino translations.",
+      "activityType": "account_creation",
+      "txHash": "b953688945af98a9570d92743dad5f0c6f3152fd4487183cf77c296d363bae7b"
+    },
+    {
+      "id": 8,
+      "name": "John Morales",
+      "wallet": "GAQ4U6QDYHD4IHN6MNWV5RKNNUOWJLFBNTNHPSLT4ATKCBERW5PUVNGQ",
+      "rating": 2,
+      "feedback": "Show total raised progress bar on homepage.",
+      "activityType": "account_creation",
+      "txHash": "1069042b1244305d36297a82a97eccb65af74e5eed1b63376bf5939866ee3755"
+    },
+    {
+      "id": 9,
+      "name": "Pilar Garcia",
+      "wallet": "GA3GI4QGUL3H7JT2ZOGA6IYZAZSRABOF64MYH7FJ4VOOEJAJI5KVKGMN",
+      "rating": 5,
+      "feedback": "Fast settlement — saw my donation within seconds.",
+      "activityType": "account_creation",
+      "txHash": "b1921ef6b64e6c74d1950bb9f709c7384410a647118fb85d0e61794ef239db18"
+    },
+    {
+      "id": 10,
+      "name": "Elena Castro",
+      "wallet": "GCDIFC5ZQOQJZTISZCMZYENWMZZRSF53Y5OV3KHBGGMMTB5D327FVKOM",
+      "rating": 4,
+      "feedback": "Emergency process is clear and secure.",
+      "activityType": "account_creation",
+      "txHash": "675156691551fe422a152650278ec4d0cfa64cb8da2a6d0cd5b73e7f192e6346"
+    },
+    {
+      "id": 11,
+      "name": "Daniel Morales",
+      "wallet": "GA7RNDPF36MCSHHHZET4SILOKCDDZ7VGIA4J2Z6JQWLLX5DFKTOMVORN",
+      "rating": 4,
+      "feedback": "Donation impact metrics by region would be cool.",
+      "activityType": "account_creation",
+      "txHash": "437fc627bcf5d3d3e8cb8187cd1ff6400f8dbfbfdb290031c2568eea689d1e44"
+    },
+    {
+      "id": 12,
+      "name": "Francisca Ramos",
+      "wallet": "GDH5IANFQUJEAHJNA442ZEELJZNYW52W6BUCYDTWVA3YVGAXH5W7XGKP",
+      "rating": 4,
+      "feedback": "Maybe add language selector for Filipino translations.",
+      "activityType": "account_creation",
+      "txHash": "ca1ab9fd122df45ceed0f76f2438a324b84ad1def33dcddf99ba2fd064fe07cf"
+    },
+    {
+      "id": 13,
+      "name": "John Gonzalez",
+      "wallet": "GD7NR6P4TAMGVIEBLVGWW2Z7MHTZTFB332JKJ2HE4PJUO2NTWJ3YRNTY",
+      "rating": 4,
+      "feedback": "Love the real-time dashboard. More charts!",
+      "activityType": "account_creation",
+      "txHash": "f4ee990222187f01729ce5d1a0d1e337c76e158dfed77b824785d3e4b3256960"
+    },
+    {
+      "id": 14,
+      "name": "Alex Dimaguila",
+      "wallet": "GC6C4CXADBSQK4JZNO27VGFCNXWWJX32VNKOW7KSAK5VEBN22JOQZ34I",
+      "rating": 5,
+      "feedback": "Like beneficiary attestation feature idea.",
+      "activityType": "account_creation",
+      "txHash": "38a31bd740dea547362854a435f071482f3ddce59f1eb33e119d0f792f67bfc5"
+    },
+    {
+      "id": 15,
+      "name": "Victor Dimaguila",
+      "wallet": "GDSONLFTBBGVSJLQT2VOQSABVCEV62Z47Z6LWDDCTOBCKHJS2J2MY4WU",
+      "rating": 5,
+      "feedback": "Add support for recurring monthly donations.",
+      "activityType": "account_creation",
+      "txHash": "5a5da5d604710831b084d78ae78114284fadc00e026d80600f278650b66c9623"
+    },
+    {
+      "id": 16,
+      "name": "Lucia Dizon",
+      "wallet": "GBY7U5LJ6HPVR5CJCXE2E35QQNMXUHMEGFSVWC7W7F5CKKDOVDN7RMIH",
+      "rating": 4,
+      "feedback": "Would love to see multi-sig for admin.",
+      "activityType": "account_creation",
+      "txHash": "a9023ca8c5dcba9d9fff94a123b8542f5a5771757d33f59f070852536b031007"
+    },
+    {
+      "id": 17,
+      "name": "Francisco Gonzalez",
+      "wallet": "GCH33XRVZOBUAAZHBES7ILDWUGAUAUHSGRJQXKX2EHWKFEDWBCVVW7WQ",
+      "rating": 4,
+      "feedback": "Super clean UI. Would love batch donation support!",
+      "activityType": "account_creation",
+      "txHash": "868af7fa6c32354d1f8ce979f1ce1c7ad73444bf43aa5c3e5ac84a273935510c"
+    },
+    {
+      "id": 18,
+      "name": "Juan Ramos",
+      "wallet": "GAFT54DXH5TFCPXAL4XMRGLIKKUNA3X3TTZ4NUUIP2TTUWMRB25P52YQ",
+      "rating": 5,
+      "feedback": "Maybe add language selector for Filipino translations.",
+      "activityType": "account_creation",
+      "txHash": "aced294124b6c286ec5fa132c43c283c87afb6dd7ec7ec4036c7c8f86465edd0"
+    },
+    {
+      "id": 19,
+      "name": "Francisco Fernandez",
+      "wallet": "GA7QFXQ6FEAOXGE4LNTQ6WGTLT67C42VIU3RBW7GABEDWTJRCRVGOU2A",
+      "rating": 5,
+      "feedback": "Telegram alerts for emergencies would be useful.",
+      "activityType": "account_creation",
+      "txHash": "9fb793b516c080ea01c9f0024a2c243e791c8e4a34134e55fc77ec5d8ebabdb6"
+    },
+    {
+      "id": 20,
+      "name": "Manuel Dizon",
+      "wallet": "GCG5MFREEUWX5D54KDQZSP7JF2IFNWDSAB7OS3YKUR7VSNJYAJP2HPBW",
+      "rating": 3,
+      "feedback": "Maybe add language selector for Filipino translations.",
+      "activityType": "account_creation",
+      "txHash": "ad0d00f176b8a75cfb679490c078a0179af8d03b1437021db47970ababde7608"
+    },
+    {
+      "id": 21,
+      "name": "Juan Morales",
+      "wallet": "GDRCFNXCXOYW4MM5BC3XKABTKV6SYVW4YWZMTIAJYOEZQ4262QTAVDYR",
+      "rating": 4,
+      "feedback": "Copying contract address is tedious. QR code would help.",
+      "activityType": "account_creation",
+      "txHash": "1130068df05d03f4daac1d5fc5e69f349dcf038d0ac4700ec6940ecb7b3b2ab3"
+    },
+    {
+      "id": 22,
+      "name": "Victor Fernandez",
+      "wallet": "GB4TQFBEQEMIE5K4ZR6ASVROGKOL43MQSMHAKZWVZYWQELZOETQNKHD5",
+      "rating": 5,
+      "feedback": "Super clean UI. Would love batch donation support!",
+      "activityType": "account_creation",
+      "txHash": "5f894081ed69f7ceec0bd6ac40b8e47b0b75204d1a3e1dccde43a09b43f3638d"
+    },
+    {
+      "id": 23,
+      "name": "Jose Fernandez",
+      "wallet": "GCNYMCPTQPAXDMRR54SJTZFR4A5HHPSX2K7LJ5ZB5V5UUFM3KDQEWIXC",
+      "rating": 3,
+      "feedback": "Consider adding NFT-based certificates for donors.",
+      "activityType": "account_creation",
+      "txHash": "079b68c1a3240bbcc13c66666b55d96beaab4d4d5ad2942639f1afd96cf82261"
+    },
+    {
+      "id": 24,
+      "name": "Gloria Reyes",
+      "wallet": "GBBTBSHI2KO66ECZW42KGU3X5XRXOHA7YWFEZVT47QRZ6TE4RXFMOBX4",
+      "rating": 5,
+      "feedback": "Timelock feature is smart. Security first!",
+      "activityType": "account_creation",
+      "txHash": "0ff0fb11cd499b5a4394872081c99b4d9588b176fd49eed0161c0c3a8d703ba9"
+    },
+    {
+      "id": 25,
+      "name": "Javier Torres",
+      "wallet": "GBMOAYRTDW4GAORA6SLJ3S5XZ77RJ6VX2JAUI5DRCF2XNFT5PZRZHK7O",
+      "rating": 3,
+      "feedback": "Would be nice to donate to specific beneficiary profiles.",
+      "activityType": "account_creation",
+      "txHash": "c7beb6481f171238bf98d46e498f0e109fe7699fbd81a8b187d0d785605342ad"
+    },
+    {
+      "id": 26,
+      "name": "Miguel Cruz",
+      "wallet": "GBMVBXQMHOURYONQ5EVSDV2I2U7L27F6EHPX7BKPNMD43QE6D3ERG7XT",
+      "rating": 4,
+      "feedback": "Recurring donation subscriptions would be great.",
+      "activityType": "account_creation",
+      "txHash": "e37c47963d078bbf7dd1b92baf3000ab9dbc41620defa772aebed2eaeab28fec"
+    },
+    {
+      "id": 27,
+      "name": "Jose Castro",
+      "wallet": "GBGFJGRSNFI33QNQYCTU6HUB6M4HAQCO5YTETUJVQJNKI7QENXQY6EPM",
+      "rating": 5,
+      "feedback": "Add support for recurring monthly donations.",
+      "activityType": "account_creation",
+      "txHash": "b1391cd9e477e9ef492647412732f70d8ca22c055b562e99dcb6938e4cf4a97a"
+    },
+    {
+      "id": 28,
+      "name": "Patricia Garcia",
+      "wallet": "GCDC7LMAZ6XBX24FHGS2KGU2UM353JYZNUY3TTJDB7XIIHHPPVKVRWL2",
+      "rating": 4,
+      "feedback": "Show total raised progress bar on homepage.",
+      "activityType": "account_creation",
+      "txHash": "2ad585a95e9332673b81dfd89d8cad8249930823693da2227616088461b682e1"
+    },
+    {
+      "id": 29,
+      "name": "Maria Fernandez",
+      "wallet": "GCA5L4D2VB5NKBOQLVNDTT3AD36JOOWPPJNKHKJSEYJQE43NRDJS5VMM",
+      "rating": 5,
+      "feedback": "Mobile wallet integration would make it more accessible.",
+      "activityType": "account_creation",
+      "txHash": "1d3a1917924471956f3191d6cc06676145b08a9f1c13904dd792c518f673b3b4"
+    },
+    {
+      "id": 30,
+      "name": "Pedro Bautista",
+      "wallet": "GA254EKABPTG3FPYECDLQBHKNDC52QRTU5OMV52E6CI27PETARUQUY7F",
+      "rating": 2,
+      "feedback": "Donation impact metrics by region would be cool.",
+      "activityType": "account_creation",
+      "txHash": "8d173107468582ce898ceae44ce1bad6356759ff68617ea163e6c84340c26eaa"
+    },
+    {
+      "id": 31,
+      "name": "Daniel Dizon",
+      "wallet": "GCRRQUIEY7MVIVN23YAZA4W7T54UEDPKU5D6VMLJTDX3J3FRHEKRD7CS",
+      "rating": 4,
+      "feedback": "Fast settlement — saw my donation within seconds.",
+      "activityType": "account_creation",
+      "txHash": "01d0d1ee4d117026cbb520784245f58ef8ff60462ac9d48d906bc52f389bc35e"
+    },
+    {
+      "id": 32,
+      "name": "Carmen Dizon",
+      "wallet": "GB772ATCW2JT6UCYWPSOE3AT7VEK5Q5XLOHXNIJFO6FKWVKTEQ2YYKWN",
+      "rating": 5,
+      "feedback": "Batch donations UI would save time for orgs.",
+      "activityType": "account_creation",
+      "txHash": "9fa5db720245af00072ff030a3c15eec40e0348193a6d9fce28e37e1a1c93246"
+    },
+    {
+      "id": 33,
+      "name": "Maya Santos",
+      "wallet": "GDZ66IWMXVYLXZMJVX4IRW43VZ5QTCNGY3WVF252EKZN4QR7ITOGZPK7",
+      "rating": 4,
+      "feedback": "Add donor leaderboard (optional).",
+      "activityType": "account_creation",
+      "txHash": "7a2c3a78261035c146eea6578626c47d73b5004e0fb7e33e76479f484ab965f2"
+    },
+    {
+      "id": 34,
+      "name": "Jenny Dimaguila",
+      "wallet": "GDIITL5FCDQV3NW7DN2XRQABTDYNI2SWJFKK64Z54YIT537T4TUYGJBT",
+      "rating": 5,
+      "feedback": "Great idea! Could add email notifications when emergency declared.",
+      "activityType": "account_creation",
+      "txHash": "aa01de13e0d4fd69c305ea5c6aa87e66ec8bc74f4c3e9eaf4d7313f4e5627131"
+    },
+    {
+      "id": 35,
+      "name": "Miguel Castro",
+      "wallet": "GAHWX4XMJY5ZFXEZUBNWZYPHBK7COI3STEGCTQRICHRVMA3PCZUJAKM7",
+      "rating": 5,
+      "feedback": "Recurring donation subscriptions would be great.",
+      "activityType": "account_creation",
+      "txHash": "0818273bd23518b99ade27855f86dbd79fd4be2d828115e551fa9fa0c5156207"
+    }
+  ]
+}

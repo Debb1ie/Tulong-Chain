@@ -248,15 +248,15 @@ export async function setTimelock(callerAddress: string, seconds: number): Promi
   return txHash;
 }
 
-// Batch operations
-export async function batchDonate(
+// Batch operations (internal generic)
+async function batchDonateGeneric(
   callerAddress: string,
-  batches: Array<{token: string, amount: number, asset: string}>
+  batches: Array<{token: string, amount: number, asset: number}>
 ): Promise<string> {
   const args = batches.map(batch => [
     new Address(batch.token).toScVal(),
-    nativeToScVal(batch.amount * 1e7, { type: "i128" }), // USDC has 7 decimals
-    nativeToScVal(batch.asset === "XLM" ? 0n : 1n, { type: "u32" }) // 0=XLM native, 1=USDC token
+    nativeToScVal(batch.amount * 1e7, { type: "i128" }),
+    nativeToScVal(BigInt(batch.asset), { type: "u32" }) // 0 = XLM, 1 = token
   ]);
   
   const { txHash } = await invokeContract(callerAddress, "batch_donate", [
@@ -264,6 +264,28 @@ export async function batchDonate(
     ...args.flat()
   ]);
   return txHash;
+}
+
+// Public API: batch USDC donations (single token type)
+export async function batchDonateUSDC(
+  callerAddress: string,
+  amounts: number[]
+): Promise<string> {
+  if (!CONFIG.usdcContractId) throw new Error("USDC contract ID not configured");
+  const batches = amounts.map(amount => ({
+    token: CONFIG.usdcContractId,
+    amount,
+    asset: 1 // 1 = token (USDC)
+  }));
+  return batchDonateGeneric(callerAddress, batches);
+}
+
+// Legacy placeholder (not used)
+export async function batchDonate(
+  callerAddress: string,
+  batches: Array<{token: string, amount: number, asset: number}>
+): Promise<string> {
+  return batchDonateGeneric(callerAddress, batches);
 }
 
 export async function batchWithdraw(

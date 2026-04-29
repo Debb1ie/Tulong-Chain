@@ -16,7 +16,7 @@
         "react-dom": "^18.2.0"
     },
     "devDependencies": {
-        "@stellar/stellar-sdk": "^15.0.1",
+        "@stellar/stellar-sdk": "^12.2.0",
         "@types/react": "^18.2.0",
         "@types/react-dom": "^18.2.0",
         "@vitejs/plugin-react": "^4.2.0",

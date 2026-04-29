@@ -70,7 +70,7 @@ export default function DashboardPage({ wallet, onBack, onConnect }: Props) {
         getTimelockDuration(!silent),
         getTimelockInfo(!silent),
         // Only fetch history if wallet connected
-        wallet.connected && wallet.address ? getDonationHistory(!silent) : Promise.resolve([]),
+        wallet.connected && wallet.address ? getDonationsFromHorizon(wallet.address) : Promise.resolve([]),
       ]);
       setStats({ totalDonated: donated, totalWithdrawn: withdrawn, balance, isEmergency: emergency });
       setPaused(pausedState);
@@ -84,8 +84,8 @@ export default function DashboardPage({ wallet, onBack, onConnect }: Props) {
         if (myDons.length > 0) {
           const last = myDons[myDons.length - 1];
           setMyLastDonation({
-            amount: Number(last.amount) / 1e7,
-            asset: last.asset === "USDC" ? "USDC" : "XLM",
+            amount: parseFloat(last.amount),
+            asset: last.asset_type === "native" ? "XLM" : (last.asset_code || "USDC"),
           });
         }
       }
@@ -104,29 +104,30 @@ export default function DashboardPage({ wallet, onBack, onConnect }: Props) {
     return () => clearInterval(interval);
    }, [refreshStats]);
 
-  // Fetch this wallet's donation history from Horizon
-  useEffect(() => {
-    if (!wallet.connected || !wallet.address) return;
+   // Fetch this wallet's donation history from Horizon
+   useEffect(() => {
+     if (!wallet.connected || !wallet.address) return;
+     const address = wallet.address; // non-null after guard
 
-    async function fetchMyDonations() {
-      try {
-        const payments = await getDonationsFromHorizon(wallet.address);
-        setMyDonationCount(payments.length);
-        if (payments.length > 0) {
-          const latest = payments[0]; // desc order
-          const amount = parseFloat(latest.amount);
-          const asset = latest.asset_type === "native" ? "XLM" : latest.asset_code || "USDC";
-          setMyLastDonation({ amount, asset });
-        }
-      } catch (err) {
-        console.error("Failed to fetch my donations:", err);
-      }
-    }
+     async function fetchMyDonations() {
+       try {
+         const payments = await getDonationsFromHorizon(address);
+         setMyDonationCount(payments.length);
+         if (payments.length > 0) {
+           const latest = payments[0]; // desc order
+           const amount = parseFloat(latest.amount);
+           const asset = latest.asset_type === "native" ? "XLM" : latest.asset_code || "USDC";
+           setMyLastDonation({ amount, asset });
+         }
+       } catch (err) {
+         console.error("Failed to fetch my donations:", err);
+       }
+     }
 
-    fetchMyDonations();
-    const interval = setInterval(fetchMyDonations, 10000); // every 10s
-    return () => clearInterval(interval);
-  }, [wallet.connected, wallet.address]);
+     fetchMyDonations();
+     const interval = setInterval(fetchMyDonations, 10000); // every 10s
+     return () => clearInterval(interval);
+   }, [wallet.connected, wallet.address]);
 
   // Show feedback modal on first visit (once per wallet)
   useEffect(() => {
