@@ -79,7 +79,7 @@ export default function DashboardPage({ wallet, onBack, onConnect }: Props) {
 
       // Filter to this wallet's donations
       if (wallet.connected && wallet.address && Array.isArray(history)) {
-        const myDons = history.filter((h: any) => h.donor === wallet.address);
+        const myDons = history.filter((h: any) => h.from === wallet.address);
         setMyDonationCount(myDons.length);
         if (myDons.length > 0) {
           const last = myDons[myDons.length - 1];
