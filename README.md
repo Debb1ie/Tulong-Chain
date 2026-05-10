@@ -2,7 +2,7 @@
 
 **Community disaster relief fund for Filipino families — transparent, instant, on-chain, with advanced safety controls.**
 
-Built on **Stellar + Soroban** · Stellar Bootcamp 2026
+Built on **Stellar + Soroban** · Stellar Bootcamp 2026.
 
 [![Stellar](https://img.shields.io/badge/Built%20on-Stellar-7F77DD?style=flat-square&logo=stellar&logoColor=white)](https://stellar.org)
 [![Soroban](https://img.shields.io/badge/Smart%20Contract-Soroban-534AB7?style=flat-square)](https://soroban.stellar.org)
